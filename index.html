@@ -806,6 +806,54 @@ html,body{height:100%;font-family:var(--font);background:var(--gray-1);color:var
   .main::-webkit-scrollbar-thumb { background: var(--apple-gray-3); border-radius: 3px; }
   .main::-webkit-scrollbar-thumb:hover { background: var(--apple-gray-4); }
 
+  /* DARK MODE */
+  body.dark {
+    --gray-1: #121212; 
+    --gray-2: #242424;
+    --gray-3: #333333;
+    --gray-4: #888888;
+    --gray-5: #A0A0A0;
+    --gray-6: #E0E0E0;
+    --black: #FFFFFF;
+    --white: #1A1A1A;
+    --blue-lt: #2A2A2A;
+    --apple-gray-1: #121212;
+    --apple-gray-2: #242424;
+    --apple-gray-3: #333333;
+    --apple-gray-4: #888888;
+    --apple-gray-5: #A0A0A0;
+    --apple-black: #FFFFFF;
+    --apple-white: #1A1A1A;
+    --apple-blue-light: #2A2A2A;
+    --sh-sm: 0 4px 20px rgba(0,0,0,0.8);
+    --sh-md: 0 10px 40px rgba(0,0,0,0.9);
+  }
+  body.dark .sidebar { background: var(--gray-1); border-right: 1px solid var(--gray-2); }
+  body.dark .topbar { background: var(--gray-1); border-bottom: 1px solid var(--gray-2); }
+  body.dark .card { border: 1px solid var(--gray-2); }
+  body.dark .card .ch { border-bottom: 1px solid var(--gray-2); }
+  body.dark .nav-item.active { background: #FFFFFF; color: #121212; box-shadow: none; }
+  body.dark .nav-item:hover:not(.active) { background: var(--gray-2); }
+  body.dark .insight-strip { border: 1px solid var(--gray-2); }
+  body.dark .seg-tabs, body.dark .seg-pills { background: var(--gray-1); border: 1px solid var(--gray-2); }
+  body.dark .seg-tab.active, body.dark .seg-pill.active { background: var(--gray-3); color: var(--black); box-shadow: none; }
+  body.dark .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+  body.dark .leaflet-container { background: #121212 !important; }
+
+  /* COLLAPSED STATE */
+  .app { transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .app.collapsed { --sw: 88px; }
+  .app.collapsed .sb-sec-lbl,
+  .app.collapsed .nav-badge,
+  .app.collapsed .user-info,
+  .app.collapsed .sb-footer .ti-dots { display: none; }
+  .app.collapsed .sb-brand img { height: 28px !important; transition: height 0.3s; }
+  .app.collapsed .nav-item { margin: 4px 16px; padding: 12px; justify-content: center; }
+  .app.collapsed .nav-item .ti { margin: 0; font-size: 20px; }
+  .app.collapsed .nav-text { display: none; }
+  .app.collapsed .collapse-btn i { transform: rotate(180deg); }
+  .app.collapsed .sb-footer { display: flex; justify-content: center; padding: 10px 0; }
+  .app.collapsed .user-row { gap: 0; }
 </style>
 </head>
 <body>
@@ -820,23 +868,27 @@ html,body{height:100%;font-family:var(--font);background:var(--gray-1);color:var
     <div class="sb-sec-lbl">Overview</div>
     <a class="nav-item active" href="#" data-page="page-dashboard">
     <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
-    Dashboard
+    <span class="nav-text">Dashboard</span>
   </a>
   </div>
   <div class="sb-sec">
     <div class="sb-sec-lbl">Intelligence</div>
-    <a class="nav-item" href="#" data-page="page-sites"><i class="ti ti-map-pin"></i>Sites</a>
-    <a class="nav-item" href="#" data-page="page-visitors"><i class="ti ti-users"></i>Visitors</a>
-    <a class="nav-item" href="#" data-page="page-markets"><i class="ti ti-world"></i>Markets<span class="nav-badge nb-new">New</span></a>
-    <a class="nav-item" href="#" data-page="page-forecasts"><i class="ti ti-trending-up"></i>Forecasts</a>
+    <a class="nav-item" href="#" data-page="page-sites"><i class="ti ti-map-pin"></i><span class="nav-text">Sites</span></a>
+    <a class="nav-item" href="#" data-page="page-visitors"><i class="ti ti-users"></i><span class="nav-text">Visitors</span></a>
+    <a class="nav-item" href="#" data-page="page-markets"><i class="ti ti-world"></i><span class="nav-text">Markets</span><span class="nav-badge nb-new">New</span></a>
+    <a class="nav-item" href="#" data-page="page-forecasts"><i class="ti ti-trending-up"></i><span class="nav-text">Forecasts</span></a>
   </div>
   <div class="sb-sec">
     <div class="sb-sec-lbl">Operations</div>
-    <a class="nav-item"><i class="ti ti-building-store"></i>Operators</a>
-    <a class="nav-item"><i class="ti ti-file-analytics"></i>Reports</a>
-    <a class="nav-item"><i class="ti ti-settings"></i>Settings</a>
+    <a class="nav-item"><i class="ti ti-building-store"></i><span class="nav-text">Operators</span></a>
+    <a class="nav-item"><i class="ti ti-file-analytics"></i><span class="nav-text">Reports</span></a>
+    <a class="nav-item"><i class="ti ti-settings"></i><span class="nav-text">Settings</span></a>
   </div>
   <div class="sb-spacer"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding-bottom:12px;">
+    <button class="dark-btn" onclick="document.body.classList.toggle('dark'); const i = this.querySelector('i'); if(document.body.classList.contains('dark')){ i.classList.replace('ti-moon', 'ti-sun'); } else { i.classList.replace('ti-sun', 'ti-moon'); }" style="background:none;border:1px solid var(--gray-3);color:var(--gray-5);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;"><i class="ti ti-moon" style="font-size:16px;"></i></button>
+    <button class="collapse-btn" onclick="document.querySelector('.app').classList.toggle('collapsed')" style="background:none;border:1px solid var(--gray-3);color:var(--gray-5);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;"><i class="ti ti-chevron-left" style="font-size:16px; transition: transform 0.3s;"></i></button>
+  </div>
   <div class="sb-footer">
     <div class="user-row">
       <div class="avatar">DM</div>
