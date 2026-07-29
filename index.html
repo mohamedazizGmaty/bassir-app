@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basir — Intelligence Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js">
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gray-1:#F4F7FE;--gray-2:#E9EDF7;--gray-3:#D4D4D8;--gray-4:#A3AED0;
+  --gray-5:#707EAE;--gray-6:#2B3674;--black:#2B3674;--white:#FFFFFF;
+  --blue:#4318FF;--blue-lt:#F4F7FE;--green:#05CD99;--green-lt:#D1FAE5;
+  --amber:#FFCE20;--amber-lt:#FEF3C7;--purple:#4318FF;--purple-lt:#F4F7FE;
+  --red:#EE5D50;--gold:#4318FF;--gold-lt:#F4F7FE;
+  --apple-blue: #4318FF; --apple-blue-light: #F4F7FE;
+  --apple-red: #EE5D50; --apple-green: #05CD99; --apple-orange: #FFCE20;
+  --apple-black: #18181B; --apple-white: #FFFFFF;
+  --apple-gray-1: #F4F7FE; --apple-gray-2: #E9EDF7; --apple-gray-3: #D4D4D8; --apple-gray-4: #A3AED0; --apple-gray-5: #707EAE;
+  --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 24px;
+  --shadow-sm: var(--sh-sm); --shadow-md: var(--sh-md); --shadow-lg: 0 24px 50px rgba(0, 0, 0, 0.06);
+  --font-display: var(--font-d);
+  --sw:280px;--th:90px;
+  --r8:8px;--r12:14px;--r16:20px;
+  --font:"Plus Jakarta Sans", "Inter", sans-serif;
+  --font-d:"Plus Jakarta Sans", "Inter", sans-serif;
+  --sh-xs:0 4px 10px rgba(0, 0, 0, 0.03);
+  --sh-sm:0 10px 30px rgba(0, 0, 0, 0.03);
+  --sh-md:0 18px 40px rgba(0, 0, 0, 0.04);
+}
+html,body{height:100%;font-family:var(--font);background:var(--gray-1);color:var(--black);-webkit-font-smoothing:antialiased;font-size:14px;}
+.app{display:grid;grid-template-columns:var(--sw) 1fr;grid-template-rows:var(--th) 1fr;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{grid-row:1/3;background:var(--white);border-right:none;display:flex;flex-direction:column;z-index:10;}
+.sb-brand{padding:30px 24px;border-bottom:none;display:flex;align-items:center;justify-content:center;height:var(--th);}
+.brand-mark{width:28px;height:28px;background:var(--black);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-mark svg{width:14px;height:14px;fill:var(--blue);}
+.brand-name{font-family:var(--font-d);font-size:15px;font-weight:700;letter-spacing:-.3px;color:var(--black);}
+.brand-sub{font-size:10px;color:var(--gray-5);}
+.sb-sec{padding:16px 10px 4px;}
+.sb-sec-lbl{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--gray-4);padding:0 12px;margin-bottom:6px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r12);cursor:pointer;color:var(--gray-4);font-size:14px;letter-spacing:-.1px;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);text-decoration:none;position:relative;margin:4px 20px;}
+.nav-item:hover{background:var(--gray-1);color:var(--black);}
+.nav-item.active{background:var(--blue);color:var(--white);font-weight:700;box-shadow:0 10px 20px rgba(67, 24, 255, 0.2);}
+.nav-item .ti{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;white-space:nowrap;}
+.nb-new{background:var(--blue-lt);color:#00966B;}
+.nb-alert{background:var(--red);color:white;}
+.sb-spacer{flex:1;}
+.sb-footer{padding:10px 14px;border-top:1px solid var(--gray-2);}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r8);cursor:pointer;transition:background .12s;}
+.user-row:hover{background:var(--gray-1);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--gray-2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--black);flex-shrink:0;letter-spacing:.3px;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--black);}
+.user-role{font-size:11px;color:var(--gray-5);}
+
+/* TOPBAR */
+.topbar{background:var(--gray-1);border-bottom:none;display:flex;align-items:center;padding:0 24px;gap:12px;z-index:9;height:var(--th);}
+.page-title{font-family:var(--font-d);font-size:17px;font-weight:700;letter-spacing:-.4px;color:var(--black);}
+.page-sub{font-size:12px;color:var(--gray-5);margin-top:1px;}
+.tb-spacer{flex:1;}
+.live-pill{display:flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--gray-2);border-radius:var(--r12);padding:4px 10px;font-size:11.5px;font-weight:500;color:var(--black);box-shadow:var(--sh-xs);}
+.live-dot{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(.85);}}
+.tb-btn{display:flex;align-items:center;gap:5px;background:var(--black);color:var(--white);border:1px solid var(--black);border-radius:var(--r12);padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all 0.2s;box-shadow:var(--sh-xs);}
+.tb-btn:hover{background:var(--gray-6);}
+.tb-btn-sec{background:var(--white);color:var(--black);border:1px solid var(--gray-2);border-radius:var(--r12);padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all 0.2s;box-shadow:var(--sh-xs);}
+.tb-btn-sec:hover{background:var(--gray-1);}
+
+/* PAGE TABS (top of content) */
+.page-tabs{display:flex;gap:0;border-bottom:1px solid var(--gray-2);padding:0 24px;background:var(--white);flex-shrink:0;}
+.ptab{padding:14px 16px;font-size:13px;font-weight:600;color:var(--gray-5);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;display:flex;align-items:center;gap:7px;letter-spacing:-.1px;white-space:nowrap;}
+.ptab:hover{color:var(--black);}
+.ptab.active{color:var(--blue);font-weight:700;border-bottom-color:var(--blue);}
+.ptab .ti{font-size:15px;}
+
+/* MAIN */
+.main-wrap{display:flex;flex-direction:column;overflow:hidden;}
+.main{overflow-y:auto;padding:0 32px 32px;flex:1;}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--gray-3);border-radius:3px;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:flex;flex-direction:column;gap:20px;}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r16);border:none;box-shadow:var(--sh-md);overflow:hidden;transition:transform .25s,box-shadow .25s;}
+.card-sm{background:var(--white);border-radius:var(--r12);border:none;box-shadow:var(--sh-sm);overflow:hidden;transition:transform .25s,box-shadow .25s;}
+.card:hover, .card-sm:hover {transform:translateY(-4px);box-shadow:var(--sh-md);}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 0;}
+.ch-tight{padding:14px 20px 0;}
+.ct{font-family:var(--font-d);font-size:13.5px;font-weight:700;color:var(--black);letter-spacing:-.1px;}
+.ca{font-size:12.5px;color:var(--blue);cursor:pointer;font-weight:600;transition:opacity .12s;}
+.ca:hover{opacity:.7;}
+
+/* GRID HELPERS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.row{display:flex;gap:24px;}
+
+/* ─── SITES PAGE ──────────────────────────────────────────────────── */
+.site-map-wrap{position:relative;height:340px;background:var(--gray-2);border-radius:0 0 var(--r16) var(--r16);overflow:hidden;}
+.site-map-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
+.map-legend{position:absolute;bottom:16px;left:16px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-radius:var(--r8);padding:10px 12px;display:flex;flex-direction:column;gap:5px;}
+.map-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-6);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.map-overlay-info{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:var(--r12);padding:12px 14px;min-width:160px;box-shadow:var(--sh-sm);}
+.moi-title{font-size:12px;font-weight:600;color:var(--black);margin-bottom:6px;}
+.moi-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;color:var(--gray-5);margin-bottom:3px;}
+.moi-val{font-weight:500;color:var(--black);}
+
+.site-cards-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.site-card{background:var(--white);border-radius:var(--r12);box-shadow:var(--sh-xs);padding:14px;cursor:pointer;transition:box-shadow .15s,transform .12s;border:.5px solid transparent;}
+.site-card:hover{box-shadow:var(--sh-md);transform:translateY(-1px);}
+.site-card.selected{border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,113,227,.15);}
+.sc-icon{width:36px;height:36px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:10px;}
+.sc-name{font-size:12.5px;font-weight:600;letter-spacing:-.1px;margin-bottom:3px;}
+.sc-type{font-size:11px;color:var(--gray-5);margin-bottom:10px;}
+.sc-ring-wrap{position:relative;width:56px;height:56px;margin:0 auto 6px;}
+.sc-ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-.5px;}
+.sc-status{display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:500;}
+
+/* ─── VISITORS PAGE ───────────────────────────────────────────────── */
+.persona-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.persona-card{background:var(--white);border-radius:var(--r16);box-shadow:var(--sh-sm);padding:20px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.persona-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.persona-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;opacity:.08;transform:translate(20px,-20px);}
+.pc-a::before{background:var(--blue);}
+.pc-b::before{background:var(--green);}
+.pc-c::before{background:var(--amber);}
+.pc-d::before{background:var(--purple);}
+.persona-icon{font-size:28px;margin-bottom:12px;}
+.persona-archetype{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;}
+.pc-a .persona-archetype{color:var(--blue);}
+.pc-b .persona-archetype{color:var(--green);}
+.pc-c .persona-archetype{color:var(--amber);}
+.pc-d .persona-archetype{color:var(--purple);}
+.persona-name{font-family:var(--font-d);font-size:17px;font-weight:600;letter-spacing:-.4px;margin-bottom:8px;}
+.persona-stat-row{display:flex;gap:12px;margin-bottom:12px;}
+.p-stat{flex:1;}
+.p-stat-val{font-size:16px;font-weight:700;letter-spacing:-.5px;line-height:1;}
+.p-stat-lbl{font-size:10px;color:var(--gray-5);margin-top:2px;}
+.persona-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
+.ptag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;}
+.pc-a .ptag{background:var(--blue-lt);color:#0055B3;}
+.pc-b .ptag{background:var(--green-lt);color:#1A7734;}
+.pc-c .ptag{background:var(--amber-lt);color:#7A4400;}
+.pc-d .ptag{background:var(--purple-lt);color:#7B2FBE;}
+.persona-bar-lbl{font-size:10px;color:var(--gray-5);margin-bottom:4px;}
+.persona-bar-track{height:4px;background:var(--gray-2);border-radius:2px;overflow:hidden;}
+.persona-bar-fill{height:100%;border-radius:2px;}
+
+.route-canvas-wrap{position:relative;height:280px;background:var(--gray-1);border-radius:0 0 var(--r16) var(--r16);overflow:hidden;}
+
+.journey-table{width:100%;}
+.jt-row{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:.5px solid var(--gray-1);}
+.jt-row:last-child{border-bottom:none;}
+.jt-step{font-size:20px;font-weight:700;color:var(--gray-2);font-family:var(--font-d);width:28px;text-align:center;flex-shrink:0;}
+.jt-info{flex:1;}
+.jt-site{font-size:13px;font-weight:500;}
+.jt-time{font-size:11.5px;color:var(--gray-5);}
+.jt-dwell{font-size:12px;font-weight:600;color:var(--blue);flex-shrink:0;}
+.jt-arr{font-size:12px;color:var(--gray-4);flex-shrink:0;}
+
+/* journey step cards (new map panel) */
+.jt-step-card{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;}
+.jt-step-card:hover{background:var(--gray-1);}
+.jt-step-card.jt-active{background:var(--blue-lt);border-left-color:var(--blue);}
+.jt-step-num{width:22px;height:22px;border-radius:50%;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.jt-step-body{flex:1;min-width:0;}
+.jt-step-name{font-size:13px;font-weight:600;letter-spacing:-.1px;color:var(--black);}
+.jt-step-time{font-size:11px;color:var(--gray-5);margin-top:2px;}
+.jt-step-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.jt-chip{font-size:10px;font-weight:500;padding:2px 7px;border-radius:10px;}
+.jt-step-arrow{font-size:11px;color:var(--gray-4);flex-shrink:0;margin-top:2px;font-weight:600;}
+
+/* ─── MARKETS PAGE ────────────────────────────────────────────────── */
+.market-globe-wrap{height:260px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 60%, #E8F1FF 0%, #F5F5F7 70%);}
+.mkt-source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px;}
+.mkt-src-card{padding:14px;background:var(--gray-1);border-radius:var(--r12);cursor:pointer;transition:background .12s;}
+.mkt-src-card:hover{background:var(--gray-2);}
+.msc-flag{font-size:20px;margin-bottom:6px;}
+.msc-name{font-size:12.5px;font-weight:600;margin-bottom:2px;}
+.msc-vol{font-size:11px;color:var(--gray-5);margin-bottom:8px;}
+.msc-delta{font-size:13px;font-weight:700;letter-spacing:-.3px;}
+.msc-bar-track{height:3px;background:var(--gray-3);border-radius:2px;overflow:hidden;margin-top:6px;}
+.msc-bar-fill{height:100%;border-radius:2px;}
+
+.competitor-matrix{padding:16px 20px 20px;}
+.matrix-grid{display:grid;grid-template-columns:auto 1fr;gap:0;}
+.matrix-y-labels{display:flex;flex-direction:column;justify-content:space-between;padding-bottom:20px;}
+.matrix-y-lbl{font-size:10px;color:var(--gray-5);text-align:right;padding-right:10px;transform:none;}
+.matrix-canvas-area{position:relative;}
+
+/* ─── FORECASTS PAGE ──────────────────────────────────────────────── */
+.forecast-hero{padding:20px;display:flex;flex-direction:column;gap:16px;}
+.fh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.forecast-headline{font-family:var(--font-d);font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1.1;color:var(--black);}
+.forecast-headline span{color:var(--purple);}
+.forecast-sub{font-size:13px;color:var(--gray-5);margin-top:6px;line-height:1.5;}
+.fh-kpis{display:flex;gap:24px;}
+.fkpi{text-align:center;}
+.fkpi-val{font-size:22px;font-weight:700;letter-spacing:-.8px;}
+.fkpi-lbl{font-size:10px;color:var(--gray-5);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+
+/* HEATMAP CALENDAR */
+.heatmap-wrap{padding:16px 20px 20px;}
+.hm-months{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.hm-month{display:flex;flex-direction:column;gap:4px;}
+.hm-month-name{font-size:11px;font-weight:600;color:var(--gray-5);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.hm-week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.hm-day-lbl{font-size:9px;color:var(--gray-4);text-align:center;font-weight:500;}
+.hm-day{width:100%;aspect-ratio:1;border-radius:3px;cursor:pointer;transition:transform .1s,box-shadow .1s;position:relative;}
+.hm-day:hover{transform:scale(1.3);box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:2;}
+.hm-day.today{box-shadow:0 0 0 2px var(--black);}
+.hm-legend{display:flex;align-items:center;gap:8px;margin-top:12px;}
+.hm-legend-lbl{font-size:11px;color:var(--gray-5);}
+.hm-legend-cells{display:flex;gap:3px;}
+.hm-legend-cell{width:14px;height:14px;border-radius:2px;}
+
+.scenario-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 20px 20px;}
+.sc-card{padding:16px;border-radius:var(--r12);border:.5px solid var(--gray-2);cursor:pointer;transition:all .15s;}
+.sc-card:hover{box-shadow:var(--sh-sm);}
+.sc-card.selected{border-color:var(--purple);background:var(--purple-lt);}
+.sc-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+.sc-sub{font-size:12px;color:var(--gray-5);line-height:1.4;margin-bottom:10px;}
+.sc-delta{font-size:18px;font-weight:700;letter-spacing:-.5px;}
+
+.event-timeline{padding:12px 20px 16px;}
+.ev-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:.5px solid var(--gray-1);}
+.ev-row:last-child{border-bottom:none;}
+.ev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ev-date{font-size:11.5px;color:var(--gray-5);width:60px;flex-shrink:0;}
+.ev-name{flex:1;font-size:13px;font-weight:500;}
+.ev-impact{font-size:12px;font-weight:600;flex-shrink:0;}
+
+/* SEGMENT PILLS */
+.seg-pills{display:flex;gap:2px;background:var(--gray-1);border-radius:var(--r8);padding:2px;width:fit-content;}
+.seg-pill{font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;color:var(--gray-5);transition:all .15s;}
+.seg-pill.active{background:white;color:var(--black);box-shadow:var(--sh-xs);}
+
+/* STAT CHIPS */
+.stat-chip{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:500;padding:4px 10px;border-radius:20px;}
+
+/* Leaflet overrides */
+.leaflet-container{font-family:var(--font);border-radius:0 0 0 var(--r16);}
+.leaflet-control-attribution{font-size:9px!important;opacity:.5;}
+.leaflet-popup-content-wrapper{border-radius:var(--r12)!important;box-shadow:var(--sh-md)!important;border:none!important;padding:0!important;}
+.leaflet-popup-content{margin:12px 14px!important;}
+.leaflet-popup-tip-container{display:none;}
+.basir-tooltip.leaflet-tooltip{background:rgba(29,29,31,.88)!important;color:white!important;border:none!important;border-radius:var(--r8)!important;font-size:11.5px!important;font-family:var(--font)!important;padding:7px 11px!important;box-shadow:var(--sh-sm)!important;}
+.basir-tooltip.leaflet-tooltip::before{display:none!important;}
+.chip-green{background:rgba(48,209,88,.10);color:#1A7734;}
+.chip-red{background:rgba(255,59,48,.10);color:#B03025;}
+.chip-amber{background:rgba(255,159,10,.10);color:#7A4400;}
+.chip-blue{background:rgba(0,113,227,.10);color:#0055B3;}
+.chip-purple{background:rgba(191,90,242,.10);color:#7B2FBE;}
+
+/* INSIGHT STRIP */
+.insight-strip{background:var(--white);border-radius:var(--r12);box-shadow:var(--sh-md);border:none;border-left:4px solid var(--blue);padding:24px 28px;display:flex;align-items:flex-start;gap:16px;}
+.is-icon{width:32px;height:32px;background:var(--gray-1);border-radius:var(--r8);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--gray-2);}
+.is-icon .ti{font-size:17px;color:var(--black);}
+.is-text{flex:1;}
+.is-eyebrow{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--black);margin-bottom:3px;}
+.is-body{font-size:13.5px;color:var(--black);line-height:1.5;}
+.is-body strong{font-weight:600;}
+.is-body em{color:var(--gray-5);font-style:normal;font-size:12.5px;}
+
+  /* ── TOP ROW: PULSE + KPIs ─────────────────────────────────── */
+  .top-row {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .pulse-card {
+    background: var(--apple-blue);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .pulse-left { flex-shrink: 0; }
+  .pulse-mid { flex: 1; max-width: 500px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 40px; margin-left: 20px; }
+  .pulse-right { flex-shrink: 0; min-width: 200px; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 40px; }
+
+  .pulse-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .pulse-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+  }
+
+  .pulse-score {
+    font-family: var(--font-display);
+    font-size: 100px;
+    font-weight: 800;
+    color: white;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pulse-score-underline {
+    display: none;
+  }
+
+  .pulse-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.90);
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+  }
+
+  .pulse-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.60);
+    line-height: 1.6;
+  }
+
+  .pulse-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .signal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .signal-name {
+    font-size: 12px;
+    color: rgba(255,255,255,0.50);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .signal-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .signal-val {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .sig-green { color: var(--apple-green); }
+  .sig-orange { color: var(--apple-orange); }
+  .sig-red { color: var(--apple-red); }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .kpi-card {
+    background: var(--apple-white);
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-sm);
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--apple-gray-4);
+    font-weight: 500;
+    letter-spacing: -0.1px;
+  }
+
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    color: var(--apple-black);
+    line-height: 1;
+  }
+
+  .kpi-delta {
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .delta-up { color: var(--apple-green); }
+  .delta-dn { color: var(--apple-red); }
+  .delta-nt { color: var(--apple-gray-4); }
+
+  .kpi-sparkline {
+    margin-top: 8px;
+    height: 32px;
+    position: relative;
+  }
+
+  /* ── MIDDLE ROW ────────────────────────────────────────────── */
+  .mid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* SITE DISTRIBUTION */
+  .site-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 24px 28px 28px;
+  }
+
+  .site-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--apple-gray-2);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .site-row:last-child { border-bottom: none; }
+  .site-row:hover { background: var(--apple-gray-1); margin: 0 -20px; padding: 10px 20px; border-radius: 0; }
+
+  .site-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .site-icon.critical { background: rgba(239,68,68,0.10); color: var(--apple-red); }
+  .site-icon.warn { background: rgba(245,158,11,0.10); color: var(--apple-orange); }
+  .site-icon.ok { background: var(--apple-blue-light); color: var(--apple-blue); }
+  .site-icon.low { background: rgba(148,163,184,0.10); color: var(--apple-gray-5); }
+
+  .site-info { flex: 1; min-width: 0; }
+  .site-name { font-size: 13.5px; font-weight: 500; color: var(--apple-black); letter-spacing: -0.1px; }
+  .site-meta { font-size: 11.5px; color: var(--apple-gray-5); }
+
+  .site-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    min-width: 80px;
+  }
+
+  .site-pct {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  .site-bar-track {
+    width: 80px;
+    height: 4px;
+    background: var(--apple-gray-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .site-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  /* MARKET SIGNALS */
+  .signal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 6px 20px 16px;
+  }
+
+  .mkt-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--apple-gray-2);
+    cursor: pointer;
+  }
+
+  .mkt-row:last-child { border-bottom: none; }
+
+  .mkt-badge {
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: -0.1px;
+  }
+
+  .badge-rise { background: rgba(52,199,89,0.12); color: #1A7734; }
+  .badge-new  { background: rgba(0,113,227,0.10); color: #0055B3; }
+  .badge-risk { background: rgba(255,59,48,0.10); color: #B03025; }
+  .badge-flat { background: rgba(110,110,115,0.10); color: var(--apple-gray-5); }
+
+  .mkt-info { flex: 1; }
+  .mkt-title { font-size: 13.5px; font-weight: 500; color: var(--apple-black); letter-spacing: -0.1px; }
+  .mkt-sub { font-size: 12px; color: var(--apple-gray-5); margin-top: 2px; }
+  .mkt-val { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; flex-shrink: 0; margin-top: 3px; }
+
+  /* ── CHART ROW ─────────────────────────────────────────────── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .chart-wrap {
+    padding: 16px 20px 18px;
+    position: relative;
+    height: 220px;
+  }
+
+  /* DONUT CHART */
+  .donut-stats {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 28px;
+  }
+  .donut-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 24px;
+  }
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .donut-val {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--apple-black);
+  }
+  .donut-lbl {
+    font-size: 11px;
+    color: var(--apple-gray-5);
+  }
+  .market-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .flag { font-size: 14px; }
+  .mkt-name { font-size: 12px; font-weight: 500; width: 80px; color: var(--apple-black); }
+  .mkt-track { flex: 1; height: 4px; background: var(--apple-gray-2); border-radius: 2px; }
+  .mkt-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+  .mkt-pct { font-size: 12px; font-weight: 600; width: 30px; text-align: right; }
+
+  /* ── INSIGHT BANNER ────────────────────────────────────────── */
+  .insight-banner {
+    background: var(--apple-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--apple-gray-2);
+    border-left: 4px solid var(--apple-black);
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .insight-icon-wrap {
+    width: 36px;
+    height: 36px;
+    background: var(--apple-gray-1);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--apple-gray-2);
+  }
+
+  .insight-icon-wrap .ti {
+    font-size: 18px;
+    color: var(--apple-black);
+  }
+
+  .insight-text { flex: 1; }
+
+  .insight-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--apple-black);
+    margin-bottom: 4px;
+  }
+
+  .insight-body {
+    font-size: 14px;
+    color: var(--apple-black);
+    line-height: 1.55;
+    letter-spacing: -0.1px;
+  }
+
+  .insight-body strong { font-weight: 600; }
+
+  .insight-body .muted { color: var(--apple-gray-5); font-size: 13px; }
+
+  .insight-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: flex-start;
+  }
+
+  .btn-primary {
+    background: var(--apple-black);
+    color: var(--apple-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    transition: background 0.12s;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-primary:hover { background: var(--apple-gray-6); }
+
+  .btn-secondary {
+    background: var(--apple-white);
+    color: var(--apple-black);
+    border: 1px solid var(--apple-gray-2);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    transition: background 0.12s, border-color 0.12s;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-secondary:hover { background: var(--apple-gray-1); }
+
+  /* ── SPARKLINES ────────────────────────────────────────────── */
+  canvas.spark { display: block; }
+
+  /* ── DONUT STAT ────────────────────────────────────────────── */
+  .donut-stats {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .donut-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 4px;
+  }
+
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .donut-val {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--apple-black);
+    line-height: 1;
+  }
+
+  .donut-lbl {
+    font-size: 10px;
+    color: var(--apple-gray-5);
+    letter-spacing: 0.2px;
+  }
+
+  .market-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .flag { font-size: 14px; width: 20px; text-align: center; }
+
+  .mkt-name { flex: 1; font-size: 12.5px; color: var(--apple-gray-6); }
+
+  .mkt-track {
+    width: 56px;
+    height: 3px;
+    background: var(--apple-gray-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .mkt-fill { height: 100%; background: var(--apple-blue); border-radius: 2px; }
+
+  .mkt-pct { font-size: 12px; font-weight: 500; color: var(--apple-gray-6); width: 26px; text-align: right; }
+
+  /* ── SEGMENT TABS ──────────────────────────────────────────── */
+  .seg-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--apple-gray-1);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+    width: fit-content;
+  }
+
+  .seg-tab {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--apple-gray-5);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .seg-tab.active {
+    background: white;
+    color: var(--apple-black);
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* ── SCROLLBAR ─────────────────────────────────────────────── */
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--apple-gray-3); border-radius: 3px; }
+  .main::-webkit-scrollbar-thumb:hover { background: var(--apple-gray-4); }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a class="sb-brand" href="#" onclick="document.querySelector('[data-page=\'page-dashboard\']').click(); return false;" style="text-decoration:none; color:inherit;">
+    <img src="public/logo.png" alt="Basir Logo" style="height: 44px; width: auto;" />
+  </a>
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Overview</div>
+    <a class="nav-item active" href="#" data-page="page-dashboard">
+    <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
+    Dashboard
+  </a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Intelligence</div>
+    <a class="nav-item" href="#" data-page="page-sites"><i class="ti ti-map-pin"></i>Sites</a>
+    <a class="nav-item" href="#" data-page="page-visitors"><i class="ti ti-users"></i>Visitors</a>
+    <a class="nav-item" href="#" data-page="page-markets"><i class="ti ti-world"></i>Markets<span class="nav-badge nb-new">New</span></a>
+    <a class="nav-item" href="#" data-page="page-forecasts"><i class="ti ti-trending-up"></i>Forecasts</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Operations</div>
+    <a class="nav-item"><i class="ti ti-building-store"></i>Operators</a>
+    <a class="nav-item"><i class="ti ti-file-analytics"></i>Reports</a>
+    <a class="nav-item"><i class="ti ti-settings"></i>Settings</a>
+  </div>
+  <div class="sb-spacer"></div>
+  <div class="sb-footer">
+    <div class="user-row">
+      <div class="avatar">DM</div>
+      <div class="user-info"><div class="user-name">Destination Manager</div><div class="user-role">AlUla · RCU</div></div>
+      <i class="ti ti-dots" style="font-size:16px;color:var(--gray-4);"></i>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div>
+    <div class="page-title" id="pageTitle">Sites</div>
+    <div class="page-sub" id="pageSub">Spatial demand · capacity · visitor flow</div>
+  </div>
+  <div class="tb-spacer"></div>
+  <div class="live-pill"><div class="live-dot"></div>Live · 14:32 AST</div>
+  <div class="seg-pills">
+    <div class="seg-pill active">Today</div>
+    <div class="seg-pill">Week</div>
+    <div class="seg-pill">Month</div>
+  </div>
+  <button class="tb-btn-sec" aria-label="Notifications" style="position:relative; width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0; border-radius:50%; border: 1px solid var(--gray-2); background: transparent; cursor:pointer; transition: background 0.12s; margin-right: 4px;" onmouseover="this.style.background='var(--gray-1)'" onmouseout="this.style.background='transparent'">
+    <i class="ti ti-bell" style="font-size:16px; color:var(--gray-6);"></i>
+    <span style="position:absolute; top:-2px; right:-2px; background:var(--red); color:white; font-size:8px; font-weight:700; width:14px; height:14px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px var(--white);">3</span>
+  </button>
+  <button class="tb-btn-sec" onclick="">Export</button>
+  <button class="tb-btn">Share report</button>
+</header>
+
+<!-- MAIN WRAP -->
+<div class="main-wrap">
+<main class="main">
+
+<!-- ═══════════════════ DASHBOARD PAGE ═══════════════════ -->
+<div class="page active" id="page-dashboard">
+    <!-- TOP ROW -->
+    <div class="top-row">
+
+      <!-- PULSE CARD -->
+      <div class="pulse-card" role="region" aria-label="Destination pulse score: 74 — Good">
+        <div class="pulse-left">
+          <div class="pulse-eyebrow">Destination Pulse</div>
+          <div class="pulse-score" aria-hidden="true">74</div>
+        </div>
+        <div class="pulse-mid">
+          <div class="pulse-label">Good — stable</div>
+          <div class="pulse-sub">Demand elevated at primary sites. Secondary sites underperforming by 34%. Weather window closes in 3 days.</div>
+        </div>
+        <div class="pulse-right">
+          <div class="pulse-signals" aria-label="Signal breakdown">
+            <div class="signal-row">
+              <div class="signal-name"><div class="signal-dot" style="background:var(--apple-green);" aria-hidden="true"></div>Visitor sentiment</div>
+              <div class="signal-val sig-green">82%</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-name"><div class="signal-dot" style="background:var(--apple-orange);" aria-hidden="true"></div>Hegra capacity</div>
+              <div class="signal-val sig-orange">87%</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-name"><div class="signal-dot" style="background:var(--apple-green);" aria-hidden="true"></div>Revenue vs target</div>
+              <div class="signal-val sig-green">+12%</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-name"><div class="signal-dot" style="background:var(--apple-red);" aria-hidden="true"></div>Jabal Ikmah load</div>
+              <div class="signal-val sig-red">22%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI GRID -->
+      <div class="kpi-grid" role="region" aria-label="Key performance indicators">
+        <div class="kpi-card">
+          <div class="kpi-label">Visitors today</div>
+          <div class="kpi-value">4,812</div>
+          <div class="kpi-delta delta-up"><i class="ti ti-trending-up" style="font-size:12px;" aria-hidden="true"></i> +8.3% vs yesterday</div>
+          <div class="kpi-sparkline"><canvas id="spark1" class="spark" height="32" aria-label="Visitor trend sparkline, upward trend"></canvas></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg. dwell time</div>
+          <div class="kpi-value">3h 42m</div>
+          <div class="kpi-delta delta-up"><i class="ti ti-trending-up" style="font-size:12px;" aria-hidden="true"></i> +17 min vs last week</div>
+          <div class="kpi-sparkline"><canvas id="spark2" class="spark" height="32" aria-label="Dwell time trend sparkline"></canvas></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Spend per visitor</div>
+          <div class="kpi-value">SAR 618</div>
+          <div class="kpi-delta delta-dn"><i class="ti ti-trending-down" style="font-size:12px;" aria-hidden="true"></i> −4.1% vs target</div>
+          <div class="kpi-sparkline"><canvas id="spark3" class="spark" height="32" aria-label="Spend trend sparkline, slight downward"></canvas></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Net Promoter Score</div>
+          <div class="kpi-value">+68</div>
+          <div class="kpi-delta delta-nt"><i class="ti ti-minus" style="font-size:12px;" aria-hidden="true"></i> Stable · rolling 7-day</div>
+          <div class="kpi-sparkline"><canvas id="spark4" class="spark" height="32" aria-label="NPS trend sparkline, stable"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHT BANNER -->
+    <div class="insight-banner" role="region" aria-label="AI recommendation">
+      <div class="insight-icon-wrap" aria-hidden="true"><i class="ti ti-bulb"></i></div>
+      <div class="insight-text">
+        <div class="insight-eyebrow">Basir recommendation</div>
+        <div class="insight-body">
+          <strong>Redistribute demand from Hegra to Jabal Ikmah.</strong> Hegra is at 87% of its daily cap with 4 hours remaining. Jabal Ikmah is at 22% — 
+          <span class="muted">redirecting 30% of remaining bookings could increase destination revenue by an estimated SAR 180K this week while reducing heritage site pressure.</span>
+        </div>
+      </div>
+      <div class="insight-actions">
+        <button class="btn-primary" onclick="document.querySelector('[data-page=\\\'page-visitors\\\']').click()">Build plan</button>
+        <button class="btn-secondary" onclick="alert('Dismissed')">Dismiss</button>
+      </div>
+    </div>
+
+    <!-- MID ROW -->
+    <div class="mid-row">
+
+      <!-- SITE DISTRIBUTION -->
+      <div class="card" role="region" aria-label="Site demand distribution">
+        <div class="ch">
+          <div class="ct">Site demand</div>
+          <span class="ca" onclick="document.querySelector('[data-page=\'page-sites\']').click()">View all sites</span>
+        </div>
+        <div class="site-list">
+          <div class="site-row" tabindex="0" aria-label="Hegra 87% capacity, critical">
+            <div class="site-icon critical"><i class="ti ti-flame" aria-hidden="true"></i></div>
+            <div class="site-info">
+              <div class="site-name">Hegra (Al-Ḥijr)</div>
+              <div class="site-meta">UNESCO · 1,200 daily cap</div>
+            </div>
+            <div class="site-bar-col">
+              <span class="site-pct" style="color:var(--apple-red);">87%</span>
+              <div class="site-bar-track"><div class="site-bar-fill" style="width:87%; background:var(--apple-red);"></div></div>
+            </div>
+          </div>
+          <div class="site-row" tabindex="0">
+            <div class="site-icon ok"><i class="ti ti-building" aria-hidden="true"></i></div>
+            <div class="site-info">
+              <div class="site-name">Old Town AlUla</div>
+              <div class="site-meta">Heritage · Open capacity</div>
+            </div>
+            <div class="site-bar-col">
+              <span class="site-pct" style="color:var(--apple-blue);">63%</span>
+              <div class="site-bar-track"><div class="site-bar-fill" style="width:63%; background:var(--apple-blue);"></div></div>
+            </div>
+          </div>
+          <div class="site-row" tabindex="0">
+            <div class="site-icon ok"><i class="ti ti-mountain" aria-hidden="true"></i></div>
+            <div class="site-info">
+              <div class="site-name">Dadan &amp; Lihyan</div>
+              <div class="site-meta">Archaeological · Guided tours</div>
+            </div>
+            <div class="site-bar-col">
+              <span class="site-pct" style="color:var(--apple-blue);">48%</span>
+              <div class="site-bar-track"><div class="site-bar-fill" style="width:48%; background:var(--apple-blue);"></div></div>
+            </div>
+          </div>
+          <div class="site-row" tabindex="0">
+            <div class="site-icon warn"><i class="ti ti-writing" aria-hidden="true"></i></div>
+            <div class="site-info">
+              <div class="site-name">Jabal Ikmah</div>
+              <div class="site-meta">Rock inscriptions · 22% used</div>
+            </div>
+            <div class="site-bar-col">
+              <span class="site-pct" style="color:var(--apple-orange);">22%</span>
+              <div class="site-bar-track"><div class="site-bar-fill" style="width:22%; background:var(--apple-orange);"></div></div>
+            </div>
+          </div>
+          <div class="site-row" tabindex="0">
+            <div class="site-icon low"><i class="ti ti-volcano" aria-hidden="true"></i></div>
+            <div class="site-info">
+              <div class="site-name">Harrat Uwayrid</div>
+              <div class="site-meta">Lava field · Undiscovered</div>
+            </div>
+            <div class="site-bar-col">
+              <span class="site-pct" style="color:var(--apple-gray-4);">11%</span>
+              <div class="site-bar-track"><div class="site-bar-fill" style="width:11%; background:var(--apple-gray-3);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKET SIGNALS -->
+      <div class="card" role="region" aria-label="Emerging market signals">
+        <div class="ch">
+          <div class="ct">Market signals</div>
+          <span class="ca" onclick="document.querySelector('[data-page=\'page-markets\']').click()">Full report</span>
+        </div>
+        <div class="signal-list">
+          <div class="mkt-row" tabindex="0">
+            <span class="mkt-badge badge-rise">↑ Rising</span>
+            <div class="mkt-info">
+              <div class="mkt-title">French cultural travelers</div>
+              <div class="mkt-sub">Nabataean archaeology · High intent</div>
+            </div>
+            <div class="mkt-val" style="color:var(--apple-green);">+41%</div>
+          </div>
+          <div class="mkt-row" tabindex="0">
+            <span class="mkt-badge badge-new">New</span>
+            <div class="mkt-info">
+              <div class="mkt-title">Japanese luxury segment</div>
+              <div class="mkt-sub">Premium desert stays · Emerging</div>
+            </div>
+            <div class="mkt-val" style="color:var(--apple-blue);">Watch</div>
+          </div>
+          <div class="mkt-row" tabindex="0">
+            <span class="mkt-badge badge-risk">Risk</span>
+            <div class="mkt-info">
+              <div class="mkt-title">GCC weekend visitors</div>
+              <div class="mkt-sub">NEOM Red Sea pressure · Softening</div>
+            </div>
+            <div class="mkt-val" style="color:var(--apple-red);">−8%</div>
+          </div>
+          <div class="mkt-row" tabindex="0">
+            <span class="mkt-badge badge-rise">↑ Rising</span>
+            <div class="mkt-info">
+              <div class="mkt-title">UK heritage travelers</div>
+              <div class="mkt-sub">Long dwell, high spend · YoY</div>
+            </div>
+            <div class="mkt-val" style="color:var(--apple-green);">+29%</div>
+          </div>
+          <div class="mkt-row" tabindex="0">
+            <span class="mkt-badge badge-flat">Stable</span>
+            <div class="mkt-info">
+              <div class="mkt-title">Domestic Saudi travelers</div>
+              <div class="mkt-sub">Core segment · 48% of volume</div>
+            </div>
+            <div class="mkt-val" style="color:var(--apple-gray-5);">+2%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART ROW -->
+    <div class="chart-row">
+
+      <!-- VISITOR FLOW CHART -->
+      <div class="card" role="region" aria-label="Visitor flow over past 7 days">
+        <div class="ch" style="padding-bottom:14px;">
+          <div class="ct">Visitor flow</div>
+          <div class="seg-pills" role="group" aria-label="Chart period">
+            <div class="seg-pill active" aria-pressed="true">7D</div>
+            <div class="seg-pill" aria-pressed="false">30D</div>
+            <div class="seg-pill" aria-pressed="false">90D</div>
+          </div>
+        </div>
+        <div style="padding: 0 20px 18px; position:relative; height:180px;">
+          <canvas id="flowChart" aria-label="Visitor flow bar chart, 7 days. Peak on Saturday with 5,200 visitors."></canvas>
+        </div>
+      </div>
+
+      <!-- ORIGIN DONUT -->
+      <div class="card" role="region" aria-label="Visitor origin breakdown">
+        <div class="ch">
+          <div class="ct">Visitor origin</div>
+          <span class="ca" onclick="document.querySelector('[data-page=\'page-markets\']').click()">Breakdown</span>
+        </div>
+        <div class="donut-stats">
+          <div class="donut-wrap" aria-hidden="true">
+            <canvas id="donutChart" width="120" height="120" aria-hidden="true"></canvas>
+            <div class="donut-center">
+              <div class="donut-val">4,812</div>
+              <div class="donut-lbl">today</div>
+            </div>
+          </div>
+          <div class="market-row"><span class="flag" aria-hidden="true">🇸🇦</span><span class="mkt-name">Saudi Arabia</span><div class="mkt-track"><div class="mkt-fill" style="width:48%;"></div></div><span class="mkt-pct">48%</span></div>
+          <div class="market-row"><span class="flag" aria-hidden="true">🇫🇷</span><span class="mkt-name">France</span><div class="mkt-track"><div class="mkt-fill" style="width:28%;"></div></div><span class="mkt-pct">14%</span></div>
+          <div class="market-row"><span class="flag" aria-hidden="true">🇬🇧</span><span class="mkt-name">UK</span><div class="mkt-track"><div class="mkt-fill" style="width:22%;"></div></div><span class="mkt-pct">11%</span></div>
+          <div class="market-row"><span class="flag" aria-hidden="true">🇩🇪</span><span class="mkt-name">Germany</span><div class="mkt-track"><div class="mkt-fill" style="width:18%;"></div></div><span class="mkt-pct">9%</span></div>
+          <div class="market-row"><span class="flag" aria-hidden="true">🌐</span><span class="mkt-name">Other</span><div class="mkt-track"><div class="mkt-fill" style="width:36%; background:var(--apple-gray-3);"></div></div><span class="mkt-pct" style="color:var(--apple-gray-5);">18%</span></div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════════ SITES PAGE ═══════════════════ -->
+<div class="page" id="page-sites">
+
+  <!-- HEATMAP MAP -->
+  <div class="card">
+    <div class="ch">
+      <div><div class="ct">Spatial demand &amp; visitor routes</div><div style="font-size:12px;color:var(--gray-5);margin-top:2px;">Today · live visitor arcs between sites</div></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="stat-chip chip-red"><i class="ti ti-flame" style="font-size:12px;"></i>Hegra 87% capacity</div>
+        <span class="ca">Full map</span>
+      </div>
+    </div>
+    <div class="site-map-wrap">
+      <canvas id="siteMapCanvas"></canvas>
+      <div class="map-legend">
+        <div style="font-size:10px;font-weight:600;color:var(--gray-5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Visitor flow</div>
+        <div class="map-legend-item"><div class="legend-dot" style="background:#FF3B30;"></div>Critical (&gt;80%)</div>
+        <div class="map-legend-item"><div class="legend-dot" style="background:#FF9F0A;"></div>Moderate (40–80%)</div>
+        <div class="map-legend-item"><div class="legend-dot" style="background:#30D158;"></div>Available (&lt;40%)</div>
+        <div class="map-legend-item"><div class="legend-dot" style="background:rgba(0,113,227,.5);width:20px;height:2px;border-radius:1px;"></div>Flow routes</div>
+      </div>
+      <div class="map-overlay-info">
+        <div class="moi-title">Live flow summary</div>
+        <div class="moi-row"><span>Active visitors</span><span class="moi-val">4,812</span></div>
+        <div class="moi-row"><span>Avg. route length</span><span class="moi-val">2.4 sites</span></div>
+        <div class="moi-row"><span>Top origin</span><span class="moi-val">Hegra → Old Town</span></div>
+        <div class="moi-row"><span>Underused sites</span><span class="moi-val" style="color:var(--amber);">3 of 5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SITE CARDS -->
+  <div class="site-cards-row">
+    <div class="site-card selected" onclick="selectSite(this,0)">
+      <div class="sc-icon" style="background:rgba(255,59,48,.10);"><i class="ti ti-flame" style="color:var(--red);font-size:17px;"></i></div>
+      <div class="sc-name">Hegra (Al-Ḥijr)</div>
+      <div class="sc-type">UNESCO · Nabataean</div>
+      <div class="sc-ring-wrap"><canvas id="ring0" width="56" height="56"></canvas><div class="sc-ring-center" style="color:var(--red);">87%</div></div>
+      <div class="sc-status" style="color:var(--red);"><i class="ti ti-alert-circle" style="font-size:12px;"></i>Critical</div>
+    </div>
+    <div class="site-card" onclick="selectSite(this,1)">
+      <div class="sc-icon" style="background:rgba(0,113,227,.08);"><i class="ti ti-building" style="color:var(--blue);font-size:17px;"></i></div>
+      <div class="sc-name">Old Town AlUla</div>
+      <div class="sc-type">Heritage · Cultural</div>
+      <div class="sc-ring-wrap"><canvas id="ring1" width="56" height="56"></canvas><div class="sc-ring-center" style="color:var(--blue);">63%</div></div>
+      <div class="sc-status" style="color:var(--blue);"><i class="ti ti-check" style="font-size:12px;"></i>Good</div>
+    </div>
+    <div class="site-card" onclick="selectSite(this,2)">
+      <div class="sc-icon" style="background:rgba(0,113,227,.08);"><i class="ti ti-mountain" style="color:var(--blue);font-size:17px;"></i></div>
+      <div class="sc-name">Dadan &amp; Lihyan</div>
+      <div class="sc-type">Archaeological</div>
+      <div class="sc-ring-wrap"><canvas id="ring2" width="56" height="56"></canvas><div class="sc-ring-center" style="color:var(--blue);">48%</div></div>
+      <div class="sc-status" style="color:var(--blue);"><i class="ti ti-check" style="font-size:12px;"></i>Good</div>
+    </div>
+    <div class="site-card" onclick="selectSite(this,3)">
+      <div class="sc-icon" style="background:rgba(255,159,10,.10);"><i class="ti ti-writing" style="color:var(--amber);font-size:17px;"></i></div>
+      <div class="sc-name">Jabal Ikmah</div>
+      <div class="sc-type">Rock inscriptions</div>
+      <div class="sc-ring-wrap"><canvas id="ring3" width="56" height="56"></canvas><div class="sc-ring-center" style="color:var(--amber);">22%</div></div>
+      <div class="sc-status" style="color:var(--amber);"><i class="ti ti-alert-triangle" style="font-size:12px;"></i>Underused</div>
+    </div>
+    <div class="site-card" onclick="selectSite(this,4)">
+      <div class="sc-icon" style="background:rgba(110,110,115,.08);"><i class="ti ti-volcano" style="color:var(--gray-5);font-size:17px;"></i></div>
+      <div class="sc-name">Harrat Uwayrid</div>
+      <div class="sc-type">Lava field · Scenic</div>
+      <div class="sc-ring-wrap"><canvas id="ring4" width="56" height="56"></canvas><div class="sc-ring-center" style="color:var(--gray-4);">11%</div></div>
+      <div class="sc-status" style="color:var(--gray-4);"><i class="ti ti-alert-triangle" style="font-size:12px;"></i>Underused</div>
+    </div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div class="insight-strip">
+    <div class="is-icon"><i class="ti ti-bulb"></i></div>
+    <div class="is-text">
+      <div class="is-eyebrow">Basir spatial insight</div>
+      <div class="is-body"><strong>77% of visitors enter via Hegra and exit via Old Town — bypassing 3 sites entirely.</strong> <em>Redirecting 30% of Hegra overflow to Jabal Ikmah via smart nudges in Assil could unlock SAR 180K incremental revenue and reduce heritage site pressure this week.</em></div>
+    </div>
+    <button class="tb-btn" style="flex-shrink:0;">Build redistribution plan</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ VISITORS PAGE ═══════════════════ -->
+<div class="page" id="page-visitors">
+
+  <!-- PERSONA CARDS -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div><div style="font-size:15px;font-weight:600;letter-spacing:-.2px;">Visitor archetypes</div><div style="font-size:12px;color:var(--gray-5);margin-top:2px;">4 dominant personas identified from 14,800 recent visits</div></div>
+      <div class="stat-chip chip-blue"><i class="ti ti-brain" style="font-size:12px;"></i>AI-classified</div>
+    </div>
+    <div class="persona-grid">
+      <div class="persona-card pc-a">
+        <div class="persona-icon">🏛️</div>
+        <div class="persona-archetype">Cultural Pilgrim</div>
+        <div class="persona-name">The Heritage<br>Seeker</div>
+        <div class="persona-stat-row">
+          <div class="p-stat"><div class="p-stat-val">4h 22m</div><div class="p-stat-lbl">Avg. dwell</div></div>
+          <div class="p-stat"><div class="p-stat-val">SAR 840</div><div class="p-stat-lbl">Avg. spend</div></div>
+        </div>
+        <div class="persona-tags"><span class="ptag">Archaeology</span><span class="ptag">Guided tours</span><span class="ptag">Museums</span></div>
+        <div class="persona-bar-lbl">Share of visitors</div>
+        <div class="persona-bar-track"><div class="persona-bar-fill" style="width:38%;background:var(--blue);"></div></div>
+        <div style="font-size:11px;color:var(--gray-5);margin-top:3px;">38% · 5,624 visitors</div>
+      </div>
+      <div class="persona-card pc-b">
+        <div class="persona-icon">📸</div>
+        <div class="persona-archetype">Experience Collector</div>
+        <div class="persona-name">The Luxury<br>Wanderer</div>
+        <div class="persona-stat-row">
+          <div class="p-stat"><div class="p-stat-val">2h 48m</div><div class="p-stat-lbl">Avg. dwell</div></div>
+          <div class="p-stat"><div class="p-stat-val">SAR 1,240</div><div class="p-stat-lbl">Avg. spend</div></div>
+        </div>
+        <div class="persona-tags"><span class="ptag">Fine dining</span><span class="ptag">Desert camps</span><span class="ptag">Spa</span></div>
+        <div class="persona-bar-lbl">Share of visitors</div>
+        <div class="persona-bar-track"><div class="persona-bar-fill" style="width:27%;background:var(--green);"></div></div>
+        <div style="font-size:11px;color:var(--gray-5);margin-top:3px;">27% · 4,000 visitors</div>
+      </div>
+      <div class="persona-card pc-c">
+        <div class="persona-icon">👨‍👩‍👧</div>
+        <div class="persona-archetype">Family Explorer</div>
+        <div class="persona-name">The Weekend<br>Family</div>
+        <div class="persona-stat-row">
+          <div class="p-stat"><div class="p-stat-val">3h 10m</div><div class="p-stat-lbl">Avg. dwell</div></div>
+          <div class="p-stat"><div class="p-stat-val">SAR 620</div><div class="p-stat-lbl">Avg. spend</div></div>
+        </div>
+        <div class="persona-tags"><span class="ptag">Activities</span><span class="ptag">F&amp;B</span><span class="ptag">Shopping</span></div>
+        <div class="persona-bar-lbl">Share of visitors</div>
+        <div class="persona-bar-track"><div class="persona-bar-fill" style="width:22%;background:var(--amber);"></div></div>
+        <div style="font-size:11px;color:var(--gray-5);margin-top:3px;">22% · 3,256 visitors</div>
+      </div>
+      <div class="persona-card pc-d">
+        <div class="persona-icon">🔬</div>
+        <div class="persona-archetype">Academic Traveler</div>
+        <div class="persona-name">The Scholar<br>Explorer</div>
+        <div class="persona-stat-row">
+          <div class="p-stat"><div class="p-stat-val">6h 05m</div><div class="p-stat-lbl">Avg. dwell</div></div>
+          <div class="p-stat"><div class="p-stat-val">SAR 510</div><div class="p-stat-lbl">Avg. spend</div></div>
+        </div>
+        <div class="persona-tags"><span class="ptag">Research</span><span class="ptag">Photography</span><span class="ptag">Archives</span></div>
+        <div class="persona-bar-lbl">Share of visitors</div>
+        <div class="persona-bar-track"><div class="persona-bar-fill" style="width:13%;background:var(--purple);"></div></div>
+        <div style="font-size:11px;color:var(--gray-5);margin-top:3px;">13% · 1,924 visitors</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTE MAP — full width -->
+  <div class="card" style="overflow:visible;">
+    <div class="ch" style="padding-bottom:12px;">
+      <div>
+        <div class="ct">Most common visitor routes</div>
+        <div style="font-size:12px;color:var(--gray-5);margin-top:2px;">Real AlUla geography · arc thickness = route volume · 14,800 visits analysed</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <!-- persona filter pills -->
+        <div class="seg-pills" id="routePersonaPills">
+          <div class="seg-pill active" data-persona="all">All visitors</div>
+          <div class="seg-pill" data-persona="heritage">Heritage Seeker</div>
+          <div class="seg-pill" data-persona="luxury">Luxury Wanderer</div>
+          <div class="seg-pill" data-persona="family">Family</div>
+        </div>
+        <span class="ca">Export routes</span>
+      </div>
+    </div>
+
+    <!-- MAP + JOURNEY PANEL side by side -->
+    <div style="display:grid;grid-template-columns:1fr 300px;min-height:420px;">
+
+      <!-- LEAFLET MAP -->
+      <div style="position:relative;">
+        <div id="routeMap" style="height:420px;width:100%;border-radius:0 0 0 var(--r16);"></div>
+        <!-- floating legend -->
+        <div style="position:absolute;bottom:16px;left:16px;z-index:1000;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:var(--r8);padding:10px 13px;box-shadow:0 2px 12px rgba(0,0,0,.12);">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-5);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Route volume</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-6);"><div style="width:28px;height:4px;background:#0071E3;border-radius:2px;opacity:.9;"></div>Primary (77%)</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-6);"><div style="width:28px;height:3px;background:#30D158;border-radius:2px;opacity:.8;"></div>Secondary (15%)</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-6);"><div style="width:28px;height:2px;background:#FF9F0A;border-radius:2px;opacity:.7;"></div>Emerging (8%)</div>
+          </div>
+        </div>
+        <!-- live counter -->
+        <div style="position:absolute;top:12px;left:12px;z-index:1000;background:rgba(29,29,31,.82);backdrop-filter:blur(8px);border-radius:var(--r8);padding:8px 13px;color:white;">
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;">Active routes now</div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1.2;">4,812 <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4);">visitors</span></div>
+        </div>
+      </div>
+
+      <!-- JOURNEY DETAIL PANEL -->
+      <div style="border-left:.5px solid var(--gray-2);display:flex;flex-direction:column;">
+        <div style="padding:14px 16px 10px;border-bottom:.5px solid var(--gray-2);">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-5);margin-bottom:2px;">Top route · Heritage Seeker</div>
+          <div style="font-size:12px;color:var(--gray-5);">Avg. total time: 8h 22m · SAR 840</div>
+        </div>
+
+        <!-- journey steps -->
+        <div style="flex:1;padding:8px 0;overflow-y:auto;">
+
+          <div class="jt-step-card jt-active" id="jstep0" onclick="highlightStep(0)">
+            <div class="jt-step-num" style="background:#FF3B30;">1</div>
+            <div class="jt-step-body">
+              <div class="jt-step-name">Hegra (Al-Ḥijr)</div>
+              <div class="jt-step-time">09:00 – 13:22 · Arrival</div>
+              <div class="jt-step-meta">
+                <span class="jt-chip" style="background:rgba(255,59,48,.10);color:#B03025;">87% capacity</span>
+                <span class="jt-chip" style="background:var(--gray-1);color:var(--gray-6);">4h 22m</span>
+              </div>
+            </div>
+            <div class="jt-step-arrow">↓</div>
+          </div>
+
+          <div class="jt-step-card" id="jstep1" onclick="highlightStep(1)">
+            <div class="jt-step-num" style="background:#0071E3;">2</div>
+            <div class="jt-step-body">
+              <div class="jt-step-name">Old Town AlUla</div>
+              <div class="jt-step-time">13:30 – 16:00 · Lunch &amp; walk</div>
+              <div class="jt-step-meta">
+                <span class="jt-chip" style="background:rgba(0,113,227,.10);color:#0055B3;">63% capacity</span>
+                <span class="jt-chip" style="background:var(--gray-1);color:var(--gray-6);">2h 30m</span>
+              </div>
+            </div>
+            <div class="jt-step-arrow">↓</div>
+          </div>
+
+          <div class="jt-step-card" id="jstep2" onclick="highlightStep(2)">
+            <div class="jt-step-num" style="background:#FF9F0A;">3</div>
+            <div class="jt-step-body">
+              <div class="jt-step-name">Dadan &amp; Lihyan</div>
+              <div class="jt-step-time">16:10 – 17:40 · Afternoon</div>
+              <div class="jt-step-meta">
+                <span class="jt-chip" style="background:rgba(0,113,227,.10);color:#0055B3;">48% capacity</span>
+                <span class="jt-chip" style="background:var(--gray-1);color:var(--gray-6);">1h 30m</span>
+              </div>
+            </div>
+            <div class="jt-step-arrow" style="color:var(--amber);">⊕ opportunity</div>
+          </div>
+
+          <div style="padding:12px 16px;background:rgba(255,159,10,.06);border-top:.5px solid rgba(255,159,10,.2);margin-top:4px;">
+            <div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Missed sites</div>
+            <div style="font-size:12px;color:var(--gray-6);line-height:1.5;">Jabal Ikmah &amp; Harrat Uwayrid are skipped by <strong>83%</strong> of this route — capacity sitting at 22% and 11%.</div>
+          </div>
+        </div>
+
+        <!-- route stats -->
+        <div style="border-top:.5px solid var(--gray-2);padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><div style="font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--black);">77%</div><div style="font-size:11px;color:var(--gray-5);">take this route</div></div>
+          <div><div style="font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--green);">SAR 840</div><div style="font-size:11px;color:var(--gray-5);">avg. spend</div></div>
+          <div><div style="font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--black);">2.4</div><div style="font-size:11px;color:var(--gray-5);">sites per visit</div></div>
+          <div><div style="font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--red);">+68 NPS</div><div style="font-size:11px;color:var(--gray-5);">satisfaction</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMING HEATMAP — full width redesign -->
+  <div class="card">
+    <div class="ch">
+      <div>
+        <div class="ct">Visit timing heatmap</div>
+        <div style="font-size:12px;color:var(--gray-5);margin-top:2px;">When visitors arrive at each site · hour × day of week · last 30 days</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="seg-pills" id="heatPersonaPills">
+          <div class="seg-pill active" data-hp="all">All</div>
+          <div class="seg-pill" data-hp="heritage">Heritage</div>
+          <div class="seg-pill" data-hp="luxury">Luxury</div>
+          <div class="seg-pill" data-hp="family">Family</div>
+        </div>
+        <div id="heatSitePills" class="seg-pills">
+          <div class="seg-pill active" data-hs="hegra">Hegra</div>
+          <div class="seg-pill" data-hs="oldtown">Old Town</div>
+          <div class="seg-pill" data-hs="dadan">Dadan</div>
+          <div class="seg-pill" data-hs="ikmah">Jabal Ikmah</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:16px;">
+
+      <!-- heatmap grid -->
+      <div style="position:relative;">
+        <div style="display:flex;gap:0;margin-left:52px;margin-bottom:4px;" id="hmDayLabels"></div>
+        <div style="display:flex;gap:8px;">
+          <div style="display:flex;flex-direction:column;justify-content:space-around;width:44px;flex-shrink:0;" id="hmHourLabels"></div>
+          <div id="hmGrid" style="flex:1;display:grid;grid-template-rows:repeat(17,1fr);gap:3px;"></div>
+        </div>
+        <!-- tooltip -->
+        <div id="hmTooltip" style="position:absolute;display:none;background:rgba(29,29,31,.9);color:white;border-radius:var(--r8);padding:8px 12px;font-size:12px;pointer-events:none;z-index:10;white-space:nowrap;"></div>
+      </div>
+
+      <!-- legend + peak bar -->
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="font-size:11px;color:var(--gray-5);">Quiet</div>
+        <div id="hmLegendBar" style="display:flex;gap:2px;"></div>
+        <div style="font-size:11px;color:var(--gray-5);">Peak demand</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+          <div style="width:8px;height:8px;border-radius:2px;background:#FF3B30;"></div>
+          <span style="font-size:11px;color:var(--gray-5);">Capacity warning</span>
+        </div>
+      </div>
+
+      <!-- hour distribution bar chart -->
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--gray-5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Peak hour distribution — arrivals per hour</div>
+        <div id="hmBarChart" style="display:flex;align-items:flex-end;gap:4px;height:64px;"></div>
+        <div id="hmBarLabels" style="display:flex;gap:4px;margin-top:4px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="insight-strip">
+    <div class="is-icon"><i class="ti ti-bulb"></i></div>
+    <div class="is-text">
+      <div class="is-eyebrow">Visitor intelligence</div>
+      <div class="is-body"><strong>The Luxury Wanderer spends 48% more per visit but represents only 27% of volume.</strong> <em>A targeted programme through Assil serving this persona premium afternoon experiences at Dadan could increase per-visit revenue by an estimated SAR 22M annually.</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MARKETS PAGE ═══════════════════ -->
+<div class="page" id="page-markets">
+
+  <div class="g2">
+    <!-- RADAR -->
+    <div class="card">
+      <div class="ch"><div class="ct">Source market demand radar</div><div class="seg-pills"><div class="seg-pill active">Intent</div><div class="seg-pill">Volume</div><div class="seg-pill">Spend</div></div></div>
+      <div style="padding:8px 20px 20px;height:280px;position:relative;">
+        <canvas id="radarChart" aria-label="Radar chart of source market demand across cultural interest, luxury, adventure, family, and culinary dimensions"></canvas>
+      </div>
+    </div>
+
+    <!-- MARKET CARDS -->
+    <div class="card">
+      <div class="ch"><div class="ct">Top source markets</div><span class="ca">Full breakdown</span></div>
+      <div class="mkt-source-grid">
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇸🇦</div><div class="msc-name">Saudi Arabia</div>
+          <div class="msc-vol">48% of volume · Core</div>
+          <div class="msc-delta" style="color:var(--green);">+2.1%</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:100%;background:var(--blue);"></div></div>
+        </div>
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇫🇷</div><div class="msc-name">France</div>
+          <div class="msc-vol">14% · Rising fast</div>
+          <div class="msc-delta" style="color:var(--green);">+41.3%</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:29%;background:var(--green);"></div></div>
+        </div>
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇬🇧</div><div class="msc-name">United Kingdom</div>
+          <div class="msc-vol">11% · High spend</div>
+          <div class="msc-delta" style="color:var(--green);">+29.0%</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:23%;background:var(--green);"></div></div>
+        </div>
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇩🇪</div><div class="msc-name">Germany</div>
+          <div class="msc-vol">9% · Cultural interest</div>
+          <div class="msc-delta" style="color:var(--green);">+18.4%</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:19%;background:var(--blue);"></div></div>
+        </div>
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇯🇵</div><div class="msc-name">Japan</div>
+          <div class="msc-vol">3% · Emerging</div>
+          <div class="msc-delta" style="color:var(--purple);">New</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:6%;background:var(--purple);"></div></div>
+        </div>
+        <div class="mkt-src-card">
+          <div class="msc-flag">🇺🇸</div><div class="msc-name">United States</div>
+          <div class="msc-vol">7% · Stable</div>
+          <div class="msc-delta" style="color:var(--amber);">+4.2%</div>
+          <div class="msc-bar-track"><div class="msc-bar-fill" style="width:15%;background:var(--amber);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREND CHART + POSITIONING -->
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">Inbound demand trend · 12 months</div><span class="ca">Forecast view</span></div>
+      <div style="padding:0 20px 20px;height:220px;position:relative;">
+        <canvas id="mktTrendChart" aria-label="Line chart showing inbound demand trends by top 4 source markets over 12 months"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Competitive positioning matrix</div><div style="font-size:11px;color:var(--gray-5);">AlUla vs peer destinations</div></div>
+      <div style="padding:0 20px 20px;height:220px;position:relative;">
+        <canvas id="posMatrix" aria-label="Bubble chart positioning AlUla against competing heritage destinations on premium score vs accessibility"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-strip">
+    <div class="is-icon"><i class="ti ti-bulb"></i></div>
+    <div class="is-text">
+      <div class="is-eyebrow">Market intelligence</div>
+      <div class="is-body"><strong>France is your fastest-growing market (+41%) but AlUla has no French-language cultural content.</strong> <em>Deploying Assil in French with Nabataean storytelling could capture an estimated 8,000 incremental French visitors in the next season — worth SAR 6.7M in revenue.</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ FORECASTS PAGE ═══════════════════ -->
+<div class="page" id="page-forecasts">
+
+  <!-- HERO + KPIS -->
+  <div class="card">
+    <div class="forecast-hero">
+      <div class="fh-top">
+        <div>
+          <div class="forecast-headline">Next 90 days:<br><span>high demand ahead</span></div>
+          <div class="forecast-sub">AI-generated forecast based on booking signals, search intent,<br>seasonal patterns, and event calendar. Updated hourly.</div>
+        </div>
+        <div class="fh-kpis">
+          <div class="fkpi"><div class="fkpi-val" style="color:var(--purple);">+23%</div><div class="fkpi-lbl">Demand vs last year</div></div>
+          <div class="fkpi"><div class="fkpi-val">412K</div><div class="fkpi-lbl">Projected visits</div></div>
+          <div class="fkpi"><div class="fkpi-val" style="color:var(--green);">SAR 254M</div><div class="fkpi-lbl">Revenue forecast</div></div>
+          <div class="fkpi"><div class="fkpi-val" style="color:var(--amber);">Aug 14</div><div class="fkpi-lbl">Peak day</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEATMAP CALENDAR -->
+  <div class="card">
+    <div class="ch">
+      <div><div class="ct">90-day demand heatmap</div><div style="font-size:12px;color:var(--gray-5);margin-top:2px;">Cell heat = predicted visitor pressure · hover for detail</div></div>
+      <div style="display:flex;gap:8px;">
+        <div class="stat-chip chip-purple"><i class="ti ti-calendar" style="font-size:12px;"></i>Aug · Sep · Oct</div>
+        <span class="ca">Full year</span>
+      </div>
+    </div>
+    <div class="heatmap-wrap" id="heatmapContainer"></div>
+  </div>
+
+  <!-- SCENARIO + EVENTS -->
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">Demand scenarios</div><div style="font-size:11px;color:var(--gray-5);">Select to update forecast</div></div>
+      <div class="scenario-cards" style="padding-top:8px;">
+        <div class="sc-card selected">
+          <div class="sc-title">Base case</div>
+          <div class="sc-sub">Current marketing spend, no new activations, seasonal patterns maintained</div>
+          <div class="sc-delta" style="color:var(--purple);">+23%</div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-title">Upside</div>
+          <div class="sc-sub">French campaign launched, Jabal Ikmah activated, new operator onboarding</div>
+          <div class="sc-delta" style="color:var(--green);">+38%</div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-title">Downside</div>
+          <div class="sc-sub">GCC softening continues, capacity constraints unresolved, peak heat pressure</div>
+          <div class="sc-delta" style="color:var(--red);">+9%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Events &amp; impact calendar</div><span class="ca">Add event</span></div>
+      <div class="event-timeline">
+        <div class="ev-row"><div class="ev-dot" style="background:var(--green);"></div><div class="ev-date">Aug 3</div><div class="ev-name">AlUla Arts &amp; Culture Weekend</div><div class="ev-impact" style="color:var(--green);">+18%</div></div>
+        <div class="ev-row"><div class="ev-dot" style="background:var(--purple);"></div><div class="ev-date">Aug 14</div><div class="ev-name">Peak summer demand</div><div class="ev-impact" style="color:var(--purple);">Peak</div></div>
+        <div class="ev-row"><div class="ev-dot" style="background:var(--amber);"></div><div class="ev-date">Aug 22</div><div class="ev-name">Heat advisory · 45°C forecast</div><div class="ev-impact" style="color:var(--amber);">−12%</div></div>
+        <div class="ev-row"><div class="ev-dot" style="background:var(--green);"></div><div class="ev-date">Sep 7</div><div class="ev-name">Heritage Week — UNESCO feature</div><div class="ev-impact" style="color:var(--green);">+31%</div></div>
+        <div class="ev-row"><div class="ev-dot" style="background:var(--blue);"></div><div class="ev-date">Sep 21</div><div class="ev-name">GCC school holiday window</div><div class="ev-impact" style="color:var(--blue);">+24%</div></div>
+        <div class="ev-row"><div class="ev-dot" style="background:var(--green);"></div><div class="ev-date">Oct 12</div><div class="ev-name">European autumn travel season</div><div class="ev-impact" style="color:var(--green);">+19%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 90-day LINE CHART -->
+  <div class="card">
+    <div class="ch"><div class="ct">Projected daily visitor volume · Aug – Oct 2026</div><span class="ca">Scenario breakdown</span></div>
+    <div style="padding:0 20px 20px;height:200px;position:relative;">
+      <canvas id="forecastLine" aria-label="90-day forecast line chart showing projected visitors August through October 2026 with confidence interval shading"></canvas>
+    </div>
+  </div>
+
+  <div class="insight-strip">
+    <div class="is-icon"><i class="ti ti-bulb"></i></div>
+    <div class="is-text">
+      <div class="is-eyebrow">Forecast intelligence</div>
+      <div class="is-body"><strong>Aug 14 is projected as the highest-demand day in AlUla's recorded history.</strong> <em>Current capacity infrastructure will be insufficient. Basir recommends activating a demand cap on Hegra from Aug 10, rerouting bookings via Assil, and pre-positioning Tripease operators at Jabal Ikmah and Dadan before Aug 7.</em></div>
+    </div>
+    <button class="tb-btn" style="flex-shrink:0;">Activate peak protocol</button>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<script>
+/* ─── NAV ─────────────────────────────────────────────────────── */
+const pageMeta = {
+  sites:     {title:'Sites',     sub:'Spatial demand · capacity · visitor flow'},
+  visitors:  {title:'Visitors',  sub:'Archetypes · journey routes · timing patterns'},
+  markets:   {title:'Markets',   sub:'Source markets · demand signals · competitive positioning'},
+  forecasts: {title:'Forecasts', sub:'90-day demand heatmap · scenarios · event calendar'}
+};
+
+/* ─── OLD NAV LOGIC REMOVED ─────────────────────────────────────────────────────── */
+
+document.querySelectorAll('.seg-pills .seg-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    p.closest('.seg-pills').querySelectorAll('.seg-pill').forEach(s => s.classList.remove('active'));
+    p.classList.add('active');
+  });
+});
+document.querySelectorAll('.sc-card').forEach(c => {
+  c.addEventListener('click', () => {
+    c.closest('.scenario-cards').querySelectorAll('.sc-card').forEach(s => s.classList.remove('selected'));
+    c.classList.add('selected');
+  });
+});
+
+/* ─── HELPERS ─────────────────────────────────────────────────── */
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+/* ─── SITE MAP (canvas arcs) ──────────────────────────────────── */
+let siteMapAnimId = null;
+let siteMapTime = 0;
+
+function animateSiteMap() {
+  if (!document.getElementById('page-sites').classList.contains('active')) {
+    siteMapAnimId = null;
+    return;
+  }
+  drawSiteMapFrame();
+  siteMapTime += 0.008; // Control particle speed
+  siteMapAnimId = requestAnimationFrame(animateSiteMap);
+}
+
+function drawSiteMap() {
+  if (!siteMapAnimId) animateSiteMap();
+}
+
+function drawSiteMapFrame() {
+  const canvas = document.getElementById('siteMapCanvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  // Only resize if needed to prevent flickering
+  if (canvas.width !== wrap.offsetWidth || canvas.height !== wrap.offsetHeight) {
+    canvas.width  = wrap.offsetWidth;
+    canvas.height = wrap.offsetHeight;
+  }
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Clear previous frame
+  ctx.clearRect(0, 0, W, H);
+
+  /* soft terrain background */
+  const grad = ctx.createRadialGradient(W*.45,H*.4,40, W*.45,H*.4,W*.55);
+  grad.addColorStop(0,'rgba(228,228,231,.6)');
+  grad.addColorStop(.5,'rgba(244,244,245,.3)');
+  grad.addColorStop(1,'rgba(250,250,250,0)');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+  /* wadi lines */
+  ctx.save();
+  ctx.strokeStyle='rgba(161,161,170,.25)'; ctx.lineWidth=14; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(W*.1,H*.2); ctx.bezierCurveTo(W*.25,H*.45,W*.55,H*.35,W*.9,H*.6); ctx.stroke();
+  ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(W*.05,H*.7); ctx.bezierCurveTo(W*.3,H*.55,W*.6,H*.65,W*.95,H*.4); ctx.stroke();
+  ctx.restore();
+
+  const sites = [
+    {x:.22,y:.30,r:28,load:.87,col:'#EF4444',name:'Hegra'},
+    {x:.48,y:.55,r:22,load:.63,col:'#18181B',name:'Old Town'},
+    {x:.65,y:.30,r:18,load:.48,col:'#18181B',name:'Dadan'},
+    {x:.78,y:.62,r:14,load:.22,col:'#F59E0B',name:'Jabal Ikmah'},
+    {x:.88,y:.38,r:12,load:.11,col:'#71717A',name:'Harrat'}
+  ];
+
+  /* flow arcs and animated particles */
+  const flows = [[0,1,0.9],[0,2,0.4],[1,2,0.3],[1,3,0.25],[2,3,0.2],[3,4,0.1]];
+  flows.forEach(([a,b,w], fIdx) => {
+    const ax=sites[a].x*W, ay=sites[a].y*H, bx=sites[b].x*W, by=sites[b].y*H;
+    const mx=(ax+bx)/2, my=(ay+by)/2 - 60;
+    
+    // Draw track
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.quadraticCurveTo(mx,my,bx,by);
+    ctx.strokeStyle=`rgba(24,24,27,${w*.55})`; ctx.lineWidth=w*12; ctx.lineCap='round';
+    ctx.shadowColor = 'rgba(24, 24, 27, 0.3)';
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    
+    // Arrowhead
+    const t=.75, x1=bx-(bx-mx)*.15, y1=by-(by-my)*.15;
+    const angle=Math.atan2(by-y1,bx-x1);
+    ctx.save(); ctx.translate(bx,by); ctx.rotate(angle);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-10,-4); ctx.lineTo(-10,4); ctx.closePath();
+    ctx.fillStyle=`rgba(24,24,27,${w*.7})`; ctx.fill(); ctx.restore();
+    ctx.restore();
+
+    // Animated particles
+    const numParticles = Math.max(1, Math.floor(w * 5));
+    for(let i=0; i<numParticles; i++) {
+       // staggered phase offsets based on time
+       let pt = (siteMapTime * (0.6 + w*0.4) + (i / numParticles) + (fIdx * 0.23)) % 1; 
+       
+       const px = (1-pt)*(1-pt)*ax + 2*(1-pt)*pt*mx + pt*pt*bx;
+       const py = (1-pt)*(1-pt)*ay + 2*(1-pt)*pt*my + pt*pt*by;
+       
+       ctx.save();
+       ctx.beginPath();
+       ctx.arc(px, py, 3 + w*2, 0, Math.PI*2);
+       ctx.fillStyle = '#05CD99'; 
+       ctx.shadowColor = '#05CD99';
+       ctx.shadowBlur = 6;
+       ctx.fill();
+       ctx.beginPath();
+       ctx.arc(px, py, 1.5 + w, 0, Math.PI*2);
+       ctx.fillStyle = '#FFFFFF';
+       ctx.fill();
+       ctx.restore();
+    }
+  });
+
+  /* site bubbles */
+  sites.forEach((s,i) => {
+    const sx=s.x*W, sy=s.y*H;
+    /* glow */
+    ctx.save();
+    ctx.beginPath(); ctx.arc(sx,sy,s.r*2.2,0,Math.PI*2);
+    const rg = ctx.createRadialGradient(sx,sy,0,sx,sy,s.r*2.2);
+    const rgb = hexToRgb(s.col);
+    rg.addColorStop(0,`rgba(${rgb},.20)`); rg.addColorStop(1,`rgba(${rgb},0)`);
+    ctx.fillStyle=rg; ctx.fill(); ctx.restore();
+
+    /* ring track */
+    ctx.save();
+    ctx.beginPath(); ctx.arc(sx,sy,s.r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=5; ctx.stroke();
+    /* load arc */
+    ctx.beginPath(); ctx.arc(sx,sy,s.r,-Math.PI/2,-Math.PI/2+Math.PI*2*s.load);
+    ctx.strokeStyle=s.col; ctx.lineWidth=5; ctx.lineCap='round'; ctx.stroke();
+    /* fill */
+    ctx.beginPath(); ctx.arc(sx,sy,s.r-4,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${hexToRgb(s.col)},.13)`; ctx.fill();
+    /* white center */
+    ctx.beginPath(); ctx.arc(sx,sy,s.r-7,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.85)'; ctx.fill(); ctx.restore();
+    /* label */
+    ctx.save();
+    ctx.font=`600 10px -apple-system`;
+    ctx.fillStyle=s.col; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(Math.round(s.load*100)+'%',sx,sy);
+    ctx.font=`500 9px -apple-system`;
+    ctx.fillStyle='#3A3A3C'; ctx.fillText(s.name,sx,sy+s.r+11);
+    ctx.restore();
+  });
+}
+drawSiteMap();
+
+/* ─── DONUT RINGS (site cards) ────────────────────────────────── */
+function drawRing(id, pct, color) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const cx=28, cy=28, r=24;
+  ctx.clearRect(0,0,56,56);
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle='#E4E4E7'; ctx.lineWidth=5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*pct);
+  ctx.strokeStyle=color; ctx.lineWidth=5; ctx.lineCap='round'; ctx.stroke();
+}
+drawRing('ring0',.87,'#EF4444'); drawRing('ring1',.63,'#18181B');
+drawRing('ring2',.48,'#18181B'); drawRing('ring3',.22,'#F59E0B'); drawRing('ring4',.11,'#71717A');
+
+function selectSite(el, idx) {
+  document.querySelectorAll('.site-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+/* ─── LEAFLET ROUTE MAP ───────────────────────────────────────── */
+let routeMap = null;
+let routeLayers = [];
+
+const SITES = [
+  {id:'hegra',    name:'Hegra (Al-Ḥijr)',  lat:26.7964, lng:37.9531, color:'#EF4444', load:87, cap:'Critical'},
+  {id:'oldtown',  name:'Old Town AlUla',   lat:26.6189, lng:37.9216, color:'#18181B', load:63, cap:'Good'},
+  {id:'dadan',    name:'Dadan & Lihyan',   lat:26.6012, lng:37.9094, color:'#18181B', load:48, cap:'Good'},
+  {id:'ikmah',    name:'Jabal Ikmah',      lat:26.6420, lng:37.8803, color:'#F59E0B', load:22, cap:'Underused'},
+  {id:'harrat',   name:'Harrat Uwayrid',   lat:26.8800, lng:37.7500, color:'#71717A', load:11, cap:'Underused'},
+];
+
+/* route sets per persona */
+const ROUTE_SETS = {
+  all: [
+    {from:0,to:1,weight:9,color:'#18181B',label:'Primary · 77%'},
+    {from:1,to:2,weight:5,color:'#18181B',label:'Secondary · 42%'},
+    {from:0,to:2,weight:3,color:'#52525B',label:'Direct · 18%'},
+    {from:1,to:3,weight:2,color:'#F59E0B',label:'Emerging · 12%'},
+    {from:2,to:3,weight:1.5,color:'#F59E0B',label:'Emerging · 8%'},
+    {from:3,to:4,weight:1,color:'#F59E0B',label:'Rare · 4%'},
+  ],
+  heritage: [
+    {from:0,to:1,weight:10,color:'#18181B',label:'Primary · 91%'},
+    {from:1,to:2,weight:7,color:'#18181B',label:'Secondary · 68%'},
+    {from:2,to:3,weight:4,color:'#52525B',label:'Deep route · 38%'},
+  ],
+  luxury: [
+    {from:0,to:1,weight:8,color:'#09090B',label:'Primary · 82%'},
+    {from:1,to:3,weight:3,color:'#09090B',label:'Scenic detour · 31%'},
+  ],
+  family: [
+    {from:0,to:1,weight:7,color:'#52525B',label:'Primary · 74%'},
+    {from:1,to:2,weight:4,color:'#52525B',label:'Secondary · 44%'},
+    {from:0,to:3,weight:2,color:'#F59E0B',label:'Activity route · 19%'},
+  ],
+};
+
+function initRouteMap() {
+  const el = document.getElementById('routeMap');
+  if (!el || routeMap) return;
+
+  routeMap = L.map('routeMap', {
+    center: [26.70, 37.88],
+    zoom: 11,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  /* Carto light basemap — clean, minimal, no clutter */
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 18,
+  }).addTo(routeMap);
+
+  drawRouteSet('all');
+  drawSiteMarkers();
+}
+
+function clearRouteLayers() {
+  routeLayers.forEach(l => routeMap.removeLayer(l));
+  routeLayers = [];
+}
+
+function drawRouteSet(persona) {
+  clearRouteLayers();
+  const routes = ROUTE_SETS[persona] || ROUTE_SETS.all;
+  routes.forEach(rt => {
+    const a = SITES[rt.from], b = SITES[rt.to];
+    /* curved geodesic-style arc via intermediate point */
+    const midLat = (a.lat + b.lat) / 2 + (Math.random() * 0.01 - 0.005);
+    const midLng = (a.lng + b.lng) / 2 + (Math.random() * 0.01 - 0.005);
+    const latlngs = [];
+    for (let t = 0; t <= 1; t += 0.05) {
+      const lat = (1-t)*(1-t)*a.lat + 2*(1-t)*t*midLat + t*t*b.lat;
+      const lng = (1-t)*(1-t)*a.lng + 2*(1-t)*t*midLng + t*t*b.lng;
+      latlngs.push([lat, lng]);
+    }
+    const poly = L.polyline(latlngs, {
+      color: rt.color,
+      weight: rt.weight,
+      opacity: 0.72,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(routeMap);
+    poly.bindTooltip(`<strong>${SITES[rt.from].name} → ${SITES[rt.to].name}</strong><br>${rt.label}`, {
+      sticky: true,
+      className: 'basir-tooltip',
+    });
+    routeLayers.push(poly);
+  });
+}
+
+function drawSiteMarkers() {
+  SITES.forEach((s, i) => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 4px 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.04);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid rgba(0,0,0,0.04);
+        cursor: pointer;
+        transition: transform 0.2s;
+        white-space: nowrap;
+      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="width: 6px; height: 6px; border-radius: 50%; background: ${s.color};"></div>
+        <span style="font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 700; color: #18181b; letter-spacing: -0.2px;">${s.load}%</span>
+      </div>`,
+      iconSize: [50, 24],
+      iconAnchor: [25, 12],
+    });
+    const marker = L.marker([s.lat, s.lng], {icon}).addTo(routeMap);
+    marker.bindPopup(`
+      <div style="font-family:-apple-system,sans-serif;min-width:160px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">${s.name}</div>
+        <div style="font-size:11px;color:#6E6E73;margin-bottom:6px;">Capacity: <strong style="color:${s.color};">${s.load}%</strong> · ${s.cap}</div>
+        <div style="display:flex;gap:8px;font-size:11px;">
+          <span>Visitors today</span>
+          <strong>${Math.round(s.load * 12)}</strong>
+        </div>
+      </div>
+    `, {maxWidth: 220});
+    routeLayers.push(marker);
+  });
+}
+
+/* persona pill switcher for map */
+document.querySelectorAll('#routePersonaPills .seg-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#routePersonaPills .seg-pill').forEach(s => s.classList.remove('active'));
+    p.classList.add('active');
+    if (routeMap) drawRouteSet(p.dataset.persona);
+  });
+});
+
+/* highlight step → fly map to that site */
+function highlightStep(idx) {
+  document.querySelectorAll('.jt-step-card').forEach(c => c.classList.remove('jt-active'));
+  document.getElementById('jstep' + idx).classList.add('jt-active');
+  if (routeMap) {
+    const order = [SITES[0], SITES[1], SITES[2]];
+    routeMap.flyTo([order[idx].lat, order[idx].lng], 13, {duration: 0.8});
+  }
+}
+
+/* init map when visitors or sites tab becomes active */
+function maybeInitMap() {
+  if (document.getElementById('page-visitors').classList.contains('active')) {
+    setTimeout(() => { initRouteMap(); if(routeMap) routeMap.invalidateSize(); }, 80);
+  }
+  if (document.getElementById('page-sites').classList.contains('active')) {
+    setTimeout(() => { drawSiteMap(); }, 80);
+  }
+}
+/* also try on load */
+maybeInitMap();
+
+/* ─── VISIT TIMING HEATMAP (full rebuild) ─────────────────────── */
+(function() {
+  const DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const HOURS = ['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm'];
+
+  /* raw arrivals per site per persona — [hour(17) × day(7)] */
+  const HDATA = {
+    hegra: {
+      all: [
+        [5,8,12,18,28,32,38],[6,9,14,20,30,34,40],[8,12,18,28,44,52,58],
+        [10,15,24,38,60,72,80],[12,18,28,42,66,78,87],[14,20,30,44,68,80,88],
+        [12,16,26,38,58,70,82],[10,14,22,34,52,64,75],[8,12,18,28,46,56,66],
+        [6,10,15,22,38,48,56],[4,8,12,18,30,40,46],[3,6,10,14,22,30,36],
+        [2,4,7,10,16,22,26],[1,3,5,7,10,14,18],[1,2,3,5,7,10,12],[0,1,2,3,4,6,8],[0,0,1,1,2,3,4]
+      ],
+      heritage:[
+        [8,12,18,26,40,46,52],[10,14,20,28,44,50,56],[14,18,26,38,60,68,74],
+        [16,22,32,48,74,84,90],[18,24,36,52,78,88,94],[20,26,38,54,80,90,96],
+        [16,22,34,48,72,82,90],[14,18,28,42,66,76,84],[10,16,24,36,58,68,76],
+        [8,12,18,28,46,56,64],[6,10,15,22,34,44,52],[4,8,12,16,26,34,40],
+        [2,5,8,12,18,24,28],[1,3,6,8,12,16,20],[1,2,4,6,8,12,14],[0,1,2,3,4,6,8],[0,0,1,1,2,3,4]
+      ],
+      luxury:[
+        [2,4,6,10,18,22,28],[3,5,8,12,20,24,30],[4,6,10,16,28,34,38],
+        [5,8,14,22,36,44,50],[6,9,16,24,38,46,54],[7,10,18,26,40,48,56],
+        [6,8,14,22,36,44,50],[5,7,12,18,30,38,44],[4,6,10,16,26,32,38],
+        [3,5,8,12,20,26,30],[2,4,6,10,16,20,24],[1,3,5,7,12,16,18],
+        [1,2,3,5,8,10,12],[0,1,2,3,5,7,8],[0,1,1,2,3,4,5],[0,0,1,1,2,2,3],[0,0,0,0,1,1,2]
+      ],
+      family:[
+        [1,2,3,5,8,10,14],[2,3,5,7,10,13,17],[3,5,8,12,18,22,26],
+        [4,6,10,16,24,30,35],[5,8,12,20,30,38,44],[6,9,14,22,32,40,46],
+        [5,7,12,18,28,36,42],[4,6,10,15,24,30,36],[3,5,8,12,20,26,30],
+        [2,4,6,10,16,20,24],[2,3,5,8,12,15,18],[1,2,4,6,9,12,14],
+        [1,1,2,4,6,8,10],[0,1,1,2,4,5,7],[0,0,1,1,2,3,4],[0,0,0,1,1,2,3],[0,0,0,0,1,1,2]
+      ],
+    },
+    oldtown:{
+      all:[
+        [2,3,5,8,10,12,16],[3,4,6,10,13,16,20],[5,7,10,15,20,24,30],
+        [8,10,14,20,28,34,40],[10,13,18,26,36,44,50],[11,14,20,28,38,46,52],
+        [16,20,26,36,48,56,63],[18,22,28,38,52,60,68],[14,18,24,32,44,52,58],
+        [10,13,18,24,34,42,48],[7,9,13,18,26,32,38],[5,7,10,14,20,26,30],
+        [4,5,8,11,16,20,24],[3,4,6,8,12,16,18],[2,3,4,6,8,10,12],[1,2,3,4,5,7,8],[0,1,1,2,3,4,5]
+      ],
+      heritage:[[4,6,8,12,16,20,24],[5,7,10,14,19,23,28],[7,10,14,20,27,32,38],[10,13,18,25,34,42,48],[12,16,21,30,40,50,56],[14,17,23,32,42,52,58],[20,24,30,40,54,62,68],[22,26,32,42,56,64,72],[16,20,26,34,46,55,62],[11,14,19,26,36,44,50],[8,10,14,20,28,34,40],[5,7,10,15,21,27,32],[4,5,8,11,16,20,24],[2,3,5,7,10,13,16],[1,2,3,4,6,8,10],[1,1,2,3,4,5,7],[0,1,1,2,2,3,4]],
+      luxury:[[1,2,3,5,7,8,10],[2,3,4,7,9,11,14],[3,5,7,10,14,17,20],[5,7,10,14,20,24,28],[7,9,13,18,25,30,36],[8,10,14,19,27,33,38],[12,15,20,27,36,42,46],[14,17,22,30,40,46,52],[11,14,19,25,34,40,46],[8,10,14,19,27,32,38],[5,7,10,14,20,24,28],[3,5,7,10,15,19,22],[2,3,5,7,11,14,17],[1,2,3,5,7,10,12],[1,1,2,4,5,7,9],[0,1,1,2,3,4,5],[0,0,1,1,2,2,3]],
+      family:[[3,4,6,9,12,15,19],[4,5,7,11,15,18,22],[6,8,11,16,22,27,32],[9,11,15,21,30,36,42],[11,14,19,27,37,45,51],[12,15,21,28,38,47,53],[18,21,27,37,50,58,65],[20,24,29,39,53,62,70],[15,19,25,33,45,54,60],[10,13,18,24,34,42,48],[7,9,13,18,26,32,38],[4,6,9,13,19,24,28],[3,4,7,10,14,18,22],[2,3,5,7,11,14,17],[1,2,3,5,7,9,11],[1,1,2,3,4,5,7],[0,0,1,1,2,3,4]],
+    },
+    dadan:{
+      all:[[0,1,2,3,5,6,8],[1,2,3,4,6,8,10],[2,3,5,7,10,13,16],[4,5,8,11,16,20,24],[6,8,11,15,22,27,32],[7,9,13,17,24,30,35],[8,10,14,20,28,34,40],[9,11,16,22,30,36,42],[8,10,14,20,28,33,38],[6,8,11,16,23,28,33],[4,6,9,12,17,22,26],[3,4,7,9,13,17,20],[2,3,5,7,10,13,15],[1,2,3,5,7,9,11],[1,1,2,3,5,6,8],[0,1,1,2,3,4,5],[0,0,0,1,1,2,3]],
+      heritage:[[1,2,3,5,8,10,12],[2,3,4,6,9,11,14],[3,5,7,10,14,18,22],[6,7,10,14,20,25,30],[8,10,14,19,27,33,38],[9,11,16,21,29,36,42],[11,13,17,23,32,38,44],[12,14,19,25,34,40,46],[10,12,16,22,30,36,42],[7,9,13,18,25,30,35],[5,7,11,15,21,26,30],[3,5,8,11,15,20,23],[2,3,6,8,11,14,17],[1,2,4,5,8,10,12],[0,1,2,3,5,7,9],[0,1,1,2,3,4,5],[0,0,0,1,1,2,3]],
+      luxury:[[0,0,1,2,3,4,6],[0,1,2,3,4,6,8],[1,2,3,5,8,10,12],[3,4,6,8,12,15,18],[5,6,8,11,16,20,24],[5,7,10,13,18,22,26],[6,7,11,15,20,25,29],[7,8,12,16,22,27,32],[6,8,11,15,20,25,29],[4,6,8,12,17,21,25],[3,4,7,9,13,16,19],[2,3,5,7,10,13,15],[1,2,4,5,7,10,12],[1,1,2,4,5,7,9],[0,1,1,2,4,5,6],[0,0,1,1,2,3,4],[0,0,0,0,1,1,2]],
+      family:[[1,1,2,3,5,6,8],[1,2,3,4,6,7,9],[2,3,4,6,9,11,14],[3,4,7,9,13,16,20],[5,6,9,12,18,22,26],[5,7,10,14,19,24,28],[7,8,11,15,22,27,32],[7,9,12,17,24,28,34],[6,8,11,15,22,26,30],[5,6,9,12,17,21,25],[3,4,7,9,13,16,20],[2,3,5,7,10,13,15],[1,2,4,5,8,10,12],[1,1,2,3,5,7,8],[0,1,1,2,3,4,6],[0,0,1,1,2,3,4],[0,0,0,0,1,1,2]],
+    },
+    ikmah:{
+      all:[[0,0,1,1,2,3,4],[0,1,1,2,3,4,5],[1,1,2,3,5,6,7],[1,2,3,5,7,9,11],[2,3,5,7,10,12,14],[3,4,6,8,11,13,16],[4,5,7,9,13,15,18],[4,5,7,9,13,16,19],[3,4,6,8,12,14,17],[2,3,5,7,10,12,14],[2,2,4,5,8,10,12],[1,2,3,4,6,8,9],[1,1,2,3,5,6,7],[0,1,1,2,3,4,5],[0,0,1,1,2,3,4],[0,0,0,1,1,2,3],[0,0,0,0,1,1,2]],
+      heritage:[[0,1,1,2,3,4,5],[1,1,2,3,4,5,7],[1,2,3,5,7,8,10],[2,3,5,7,10,12,15],[3,4,7,9,13,16,18],[4,5,8,10,14,17,20],[5,6,9,11,15,18,22],[5,6,9,11,16,19,22],[4,5,7,10,14,17,19],[3,4,6,8,11,13,16],[2,3,5,6,9,11,14],[1,2,3,5,7,9,11],[1,1,3,4,6,7,9],[0,1,2,3,4,5,7],[0,1,1,2,3,4,5],[0,0,1,1,2,2,3],[0,0,0,0,1,1,2]],
+      luxury:[[0,0,0,1,1,2,3],[0,0,1,1,2,3,4],[0,1,1,2,4,5,6],[1,1,2,4,6,7,9],[1,2,4,5,8,10,11],[2,3,5,6,9,11,13],[2,3,5,7,10,12,14],[2,3,5,7,10,12,15],[2,3,4,6,9,11,13],[1,2,3,5,8,9,11],[1,1,3,4,6,8,9],[0,1,2,3,5,6,7],[0,1,1,2,3,5,6],[0,0,1,1,2,3,4],[0,0,0,1,1,2,3],[0,0,0,0,1,1,2],[0,0,0,0,0,1,1]],
+      family:[[0,0,1,1,2,2,3],[0,0,1,1,2,3,4],[0,1,1,2,3,4,5],[1,1,2,3,5,7,8],[1,2,3,5,7,9,11],[2,2,4,6,8,10,12],[2,3,5,6,9,11,14],[2,3,5,6,9,12,14],[2,2,4,5,8,10,12],[1,2,3,4,7,8,10],[1,1,3,4,6,7,9],[0,1,2,3,4,6,7],[0,1,1,2,3,4,6],[0,0,1,1,2,3,4],[0,0,0,1,1,2,3],[0,0,0,0,1,1,2],[0,0,0,0,0,1,1]],
+    }
+  };
+
+  function lerp3(stops, t) {
+    /* stops: array of {at, hex} — t 0..1 */
+    let lo = stops[0], hi = stops[stops.length-1];
+    for (let i = 0; i < stops.length-1; i++) {
+      if (t >= stops[i].at && t <= stops[i+1].at) { lo=stops[i]; hi=stops[i+1]; break; }
+    }
+    const u = hi.at===lo.at ? 0 : (t - lo.at)/(hi.at - lo.at);
+    const a=lo.hex, b=hi.hex;
+    const ar=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16),parseInt(a.slice(5,7),16)];
+    const br=[parseInt(b.slice(1,3),16),parseInt(b.slice(3,5),16),parseInt(b.slice(5,7),16)];
+    return `rgb(${Math.round(ar[0]+(br[0]-ar[0])*u)},${Math.round(ar[1]+(br[1]-ar[1])*u)},${Math.round(ar[2]+(br[2]-ar[2])*u)})`;
+  }
+
+  const COLOR_STOPS = [
+    {at:0,   hex:'#F4F4F5'},
+    {at:0.25,hex:'#D4D4D8'},
+    {at:0.5, hex:'#52525B'},
+    {at:0.75,hex:'#18181B'},
+    {at:1,   hex:'#09090B'},
+  ];
+
+  function cellColor(v) { return lerp3(COLOR_STOPS, v); }
+
+  let currentSite = 'hegra';
+  let currentPersona = 'all';
+
+  function buildHeatmap() {
+    const data2d = HDATA[currentSite][currentPersona]; /* [17 hours][7 days] */
+    /* flatten to find max */
+    const flat = data2d.flat();
+    const max = Math.max(...flat) || 1;
+
+    /* day labels */
+    const dayLblEl = document.getElementById('hmDayLabels');
+    if (!dayLblEl) return;
+    dayLblEl.innerHTML = '';
+    dayLblEl.style.display = 'grid';
+    dayLblEl.style.gridTemplateColumns = 'repeat(7,1fr)';
+    dayLblEl.style.gap = '3px';
+    dayLblEl.style.marginLeft = '52px';
+    DAYS.forEach(d => {
+      const el = document.createElement('div');
+      el.textContent = d;
+      el.style.cssText = 'font-size:11px;font-weight:500;color:#AEAEB2;text-align:center;';
+      dayLblEl.appendChild(el);
+    });
+
+    /* hour labels */
+    const hourLblEl = document.getElementById('hmHourLabels');
+    hourLblEl.innerHTML = '';
+    HOURS.forEach(h => {
+      const el = document.createElement('div');
+      el.textContent = h;
+      el.style.cssText = 'font-size:10px;color:#AEAEB2;text-align:right;line-height:1;padding-right:8px;';
+      hourLblEl.appendChild(el);
+    });
+
+    /* grid cells */
+    const grid = document.getElementById('hmGrid');
+    grid.innerHTML = '';
+    grid.style.gridTemplateColumns = 'repeat(7,1fr)';
+    grid.style.gridTemplateRows = `repeat(${HOURS.length},1fr)`;
+
+    const tooltip = document.getElementById('hmTooltip');
+
+    data2d.forEach((row, hi) => {
+      row.forEach((val, di) => {
+        const v = val / max;
+        const cell = document.createElement('div');
+        cell.style.cssText = `
+          background:${cellColor(v)};
+          border-radius:4px;
+          height:22px;
+          cursor:pointer;
+          transition:transform .1s,box-shadow .1s;
+          ${val >= max * 0.85 ? 'box-shadow:0 0 0 1.5px #FF3B30;' : ''}
+        `;
+        cell.addEventListener('mouseenter', e => {
+          cell.style.transform = 'scale(1.15)';
+          cell.style.zIndex = '5';
+          tooltip.style.display = 'block';
+          tooltip.innerHTML = `<strong>${DAYS[di]} · ${HOURS[hi]}</strong><br>${val} arrivals${val >= max*0.85 ? ' ⚠ near capacity' : ''}`;
+        });
+        cell.addEventListener('mousemove', e => {
+          const rect = document.getElementById('hmGrid').parentElement.getBoundingClientRect();
+          tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
+          tooltip.style.top  = (e.clientY - rect.top  - 36) + 'px';
+        });
+        cell.addEventListener('mouseleave', () => {
+          cell.style.transform = '';
+          cell.style.zIndex = '';
+          tooltip.style.display = 'none';
+        });
+        grid.appendChild(cell);
+      });
+    });
+
+    /* legend bar */
+    const legBar = document.getElementById('hmLegendBar');
+    legBar.innerHTML = '';
+    for (let i = 0; i <= 20; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `width:18px;height:12px;border-radius:2px;background:${cellColor(i/20)};`;
+      legBar.appendChild(c);
+    }
+
+    /* hour bar chart — sum across days */
+    const hourTotals = data2d.map(row => row.reduce((s,v)=>s+v,0));
+    const maxBar = Math.max(...hourTotals) || 1;
+    const barChart = document.getElementById('hmBarChart');
+    const barLabels = document.getElementById('hmBarLabels');
+    barChart.innerHTML = ''; barLabels.innerHTML = '';
+    hourTotals.forEach((v, i) => {
+      const pct = v / maxBar;
+      const bar = document.createElement('div');
+      bar.style.cssText = `flex:1;background:${cellColor(pct)};border-radius:3px 3px 0 0;height:${Math.max(2, Math.round(pct*64))}px;transition:height .3s;cursor:default;`;
+      bar.title = `${HOURS[i]}: ${v} arrivals`;
+      barChart.appendChild(bar);
+
+      const lbl = document.createElement('div');
+      lbl.textContent = HOURS[i].replace('am','').replace('pm','');
+      lbl.style.cssText = 'flex:1;font-size:9px;color:#AEAEB2;text-align:center;';
+      barLabels.appendChild(lbl);
+    });
+  }
+
+  /* persona pill switcher */
+  document.querySelectorAll('#heatPersonaPills .seg-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('#heatPersonaPills .seg-pill').forEach(s => s.classList.remove('active'));
+      p.classList.add('active');
+      currentPersona = p.dataset.hp;
+      buildHeatmap();
+    });
+  });
+
+  /* site pill switcher */
+  document.querySelectorAll('#heatSitePills .seg-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('#heatSitePills .seg-pill').forEach(s => s.classList.remove('active'));
+      p.classList.add('active');
+      currentSite = p.dataset.hs;
+      buildHeatmap();
+    });
+  });
+
+  /* build on load */
+  buildHeatmap();
+})();
+
+/* ─── RADAR CHART ─────────────────────────────────────────────── */
+new Chart(document.getElementById('radarChart'), {
+  type:'radar',
+  data:{
+    labels:['Cultural interest','Luxury & premium','Adventure','Family travel','Culinary'],
+    datasets:[
+      {label:'France',data:[95,72,58,40,80],borderColor:'#4318FF',backgroundColor:'rgba(67, 24, 255, 0.08)',borderWidth:2,pointBackgroundColor:'#4318FF',pointRadius:4},
+      {label:'UK',data:[88,78,65,55,70],borderColor:'#05CD99',backgroundColor:'rgba(5, 205, 153, 0.08)',borderWidth:2,pointBackgroundColor:'#05CD99',pointRadius:4},
+      {label:'Saudi Arabia',data:[65,55,75,90,80],borderColor:'#EE5D50',backgroundColor:'rgba(238, 93, 80, 0.08)',borderWidth:2,pointBackgroundColor:'#EE5D50',pointRadius:4},
+      {label:'Japan',data:[90,88,50,30,65],borderColor:'#FFCE20',backgroundColor:'rgba(255, 206, 32, 0.08)',borderWidth:2,pointBackgroundColor:'#FFCE20',pointRadius:4},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'-apple-system'},boxWidth:8,padding:14,usePointStyle:true}}},
+    scales:{r:{
+      min:0,max:100,
+      ticks:{stepSize:25,color:'#AEAEB2',font:{size:10},backdropColor:'transparent'},
+      grid:{color:'rgba(0,0,0,.06)'},
+      pointLabels:{font:{size:11.5,family:'-apple-system'},color:'#3A3A3C'}
+    }}
+  }
+});
+
+/* ─── MARKET TREND ────────────────────────────────────────────── */
+const months=['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+new Chart(document.getElementById('mktTrendChart'), {
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Saudi Arabia',data:[4200,3800,3400,3100,2800,3200,3600,4000,4400,4800,5200,5600],borderColor:'#4318FF',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
+      {label:'France',data:[800,750,700,900,1100,1300,1100,900,1400,1600,1800,2100],borderColor:'#05CD99',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
+      {label:'UK',data:[700,650,600,750,900,1000,950,800,1100,1250,1300,1450],borderColor:'#EE5D50',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
+      {label:'Japan',data:[50,60,80,120,160,200,180,150,220,280,340,420],borderColor:'#FFCE20',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4,borderDash:[4,3]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'-apple-system'},boxWidth:8,padding:14,usePointStyle:true}},
+      tooltip:{backgroundColor:'#1D1D1F',titleColor:'rgba(255,255,255,.6)',bodyColor:'#fff',padding:10,cornerRadius:8,displayColors:true,bodyFont:{size:12,family:'-apple-system'}}},
+    scales:{
+      x:{grid:{display:false},border:{display:false},ticks:{color:'#AEAEB2',font:{size:11,family:'-apple-system'}}},
+      y:{grid:{color:'rgba(0,0,0,.04)'},border:{display:false},ticks:{color:'#AEAEB2',font:{size:11,family:'-apple-system'},callback:v=>v>=1000?(v/1000).toFixed(1)+'k':v,maxTicksLimit:5}}
+    }
+  }
+});
+
+/* ─── COMPETITIVE MATRIX (bubble) ────────────────────────────── */
+new Chart(document.getElementById('posMatrix'), {
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'AlUla',data:[{x:72,y:85,r:20}],backgroundColor:'rgba(67,24,255,.80)',borderColor:'#4318FF',borderWidth:2},
+      {label:'Petra',data:[{x:85,y:55,r:16}],backgroundColor:'rgba(238,93,80,.60)',borderColor:'#EE5D50',borderWidth:1.5},
+      {label:'Palmyra',data:[{x:40,y:70,r:8}],backgroundColor:'rgba(212,212,216,.60)',borderColor:'#D4D4D8',borderWidth:1.5},
+      {label:'Luxor',data:[{x:78,y:40,r:14}],backgroundColor:'rgba(255,206,32,.60)',borderColor:'#FFCE20',borderWidth:1.5},
+      {label:'Cappadocia',data:[{x:65,y:62,r:12}],backgroundColor:'rgba(5,205,153,.60)',borderColor:'#05CD99',borderWidth:1.5},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    layout:{padding:{top:10,right:10,left:10,bottom:10}},
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11,family:'-apple-system'},boxWidth:8,padding:12,usePointStyle:true}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: accessibility ${ctx.parsed.x}, premium ${ctx.parsed.y}`},backgroundColor:'#1D1D1F',bodyColor:'#fff',padding:10,cornerRadius:8,bodyFont:{size:12}}
+    },
+    scales:{
+      x:{min:20,max:100,grid:{color:'rgba(0,0,0,.04)'},border:{display:false},title:{display:true,text:'Accessibility score',color:'#AEAEB2',font:{size:10,family:'-apple-system'}},ticks:{color:'#AEAEB2',font:{size:10}}},
+      y:{min:20,max:100,grid:{color:'rgba(0,0,0,.04)'},border:{display:false},title:{display:true,text:'Premium positioning',color:'#AEAEB2',font:{size:10,family:'-apple-system'}},ticks:{color:'#AEAEB2',font:{size:10}}}
+    }
+  }
+});
+
+/* ─── HEATMAP CALENDAR ────────────────────────────────────────── */
+(function buildHeatmap() {
+  const container = document.getElementById('heatmapContainer');
+  if (!container) return;
+  const months = [
+    {name:'August 2026', days:31, start:6},
+    {name:'September 2026', days:30, start:2},
+    {name:'October 2026', days:31, start:4},
+  ];
+  function lerpC(a,b,t){
+    const ar=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16),parseInt(a.slice(5,7),16)];
+    const br=[parseInt(b.slice(1,3),16),parseInt(b.slice(3,5),16),parseInt(b.slice(5,7),16)];
+    return `rgb(${Math.round(ar[0]+(br[0]-ar[0])*t)},${Math.round(ar[1]+(br[1]-ar[1])*t)},${Math.round(ar[2]+(br[2]-ar[2])*t)})`;
+  }
+  function heatColor(v){
+    if(v<.4) return lerpC('#F4F7FE','#A3AED0',v/.4);
+    if(v<.7) return lerpC('#A3AED0','#6AD2FF',(v-.4)/.3);
+    return lerpC('#6AD2FF','#4318FF',(v-.7)/.3);
+  }
+  /* synthetic demand curve: peaks around Aug 14 (day 14), Sep 7, Oct 12 */
+  function demand(m,d){
+    let base=.35;
+    if(m===0){base+=Math.exp(-Math.pow(d-14,2)/18)*.65+Math.exp(-Math.pow(d-3,2)/10)*.25;}
+    if(m===1){base+=Math.exp(-Math.pow(d-7,2)/14)*.55+Math.exp(-Math.pow(d-21,2)/12)*.30;}
+    if(m===2){base+=Math.exp(-Math.pow(d-12,2)/16)*.45+Math.exp(-Math.pow(d-26,2)/14)*.25;}
+    /* weekend bump */
+    return Math.min(1, base);
+  }
+
+  const dayLbls = ['S','M','T','W','T','F','S'];
+  const wrap = document.createElement('div');
+  wrap.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:16px 20px 20px;';
+
+  months.forEach((mo,mi) => {
+    const mDiv = document.createElement('div');
+    mDiv.innerHTML=`<div class="hm-month-name">${mo.name}</div>`;
+    const lblRow = document.createElement('div');
+    lblRow.className='hm-week';
+    dayLbls.forEach(l=>{const s=document.createElement('div');s.className='hm-day-lbl';s.textContent=l;lblRow.appendChild(s);});
+    mDiv.appendChild(lblRow);
+
+    let dayCount=1, col=mo.start%7;
+    while(dayCount<=mo.days){
+      const week=document.createElement('div'); week.className='hm-week';
+      for(let c=0;c<7;c++){
+        const cell=document.createElement('div');
+        if((c<col&&dayCount===1)||dayCount>mo.days){
+          cell.style.cssText='width:100%;aspect-ratio:1;';
+        } else {
+          const v=demand(mi,dayCount);
+          cell.className='hm-day';
+          cell.style.background=heatColor(v);
+          const pct=Math.round(v*100);
+          cell.title=`${mo.name.split(' ')[0]} ${dayCount}: ${pct}% predicted demand`;
+          if(mi===0&&dayCount===29) cell.classList.add('today');
+          dayCount++;
+        }
+        week.appendChild(cell);
+        col=0;
+      }
+      mDiv.appendChild(week);
+    }
+    wrap.appendChild(mDiv);
+  });
+
+  /* legend */
+  const leg=document.createElement('div');
+  leg.className='hm-legend';
+  leg.style.cssText='padding:0 20px 16px;';
+  leg.innerHTML=`<span class="hm-legend-lbl">Low</span><div class="hm-legend-cells" id="hmLeg"></div><span class="hm-legend-lbl">High demand</span>`;
+  container.appendChild(wrap);
+  container.appendChild(leg);
+  const legCells=document.getElementById('hmLeg');
+  [0,.17,.33,.5,.67,.83,1].forEach(v=>{
+    const c=document.createElement('div');
+    c.className='hm-legend-cell';
+    c.style.background=lerpC('#F4F7FE','#4318FF',v);
+    legCells.appendChild(c);
+  });
+})();
+
+/* ─── FORECAST LINE ───────────────────────────────────────────── */
+(function(){
+  const labels=[];
+  const base=[], upper=[], lower=[];
+  const startDate=new Date('2026-08-01');
+  for(let i=0;i<90;i++){
+    const d=new Date(startDate); d.setDate(d.getDate()+i);
+    labels.push(i%7===0?d.toLocaleDateString('en-GB',{month:'short',day:'numeric'}):'');
+    const t=i/89;
+    const v=3200+1800*Math.exp(-Math.pow(t-.17,2)/.04)+1200*Math.exp(-Math.pow(t-.47,2)/.06)+900*Math.exp(-Math.pow(t-.73,2)/.05)+300*Math.sin(t*12);
+    base.push(Math.round(v));
+    upper.push(Math.round(v*1.12));
+    lower.push(Math.round(v*.88));
+  }
+  new Chart(document.getElementById('forecastLine'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Upper bound',data:upper,borderColor:'transparent',backgroundColor:'rgba(67, 24, 255, 0.1)',fill:'+1',pointRadius:0,tension:.4},
+        {label:'Forecast',data:base,borderColor:'#4318FF',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4,fill:false},
+        {label:'Lower bound',data:lower,borderColor:'transparent',backgroundColor:'rgba(67, 24, 255, 0.1)',fill:'-1',pointRadius:0,tension:.4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{mode:'index',intersect:false,backgroundColor:'#0F172A',titleColor:'rgba(255,255,255,.6)',bodyColor:'#fff',padding:10,cornerRadius:8,
+          callbacks:{label:ctx=>ctx.datasetIndex===1?` ${ctx.parsed.y.toLocaleString()} visitors`:null}}
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#94A3B8',font:{size:10,family:'-apple-system'},maxRotation:0}},
+        y:{grid:{color:'rgba(15, 23, 42, 0.04)'},border:{display:false},ticks:{color:'#94A3B8',font:{size:11,family:'-apple-system'},callback:v=>v>=1000?(v/1000).toFixed(1)+'k':v,maxTicksLimit:5}}
+      }
+    }
+  });
+})();
+
+  /* ── DASHBOARD SPARKLINES ─────────────────────────────────────────────── */
+  function makeSpark(id, data, color, fill) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.parentElement.offsetWidth;
+    canvas.width = w;
+    canvas.height = 32;
+
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min || 1;
+    const pts = data.map((v, i) => ({
+      x: (i / (data.length - 1)) * w,
+      y: 28 - ((v - min) / range) * 24
+    }));
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    pts.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    ctx.lineTo(pts[pts.length - 1].x, 32);
+    ctx.lineTo(0, 32);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+
+  makeSpark('spark1', [3200,3800,3400,4100,3900,4500,4812], '#18181B', 'rgba(24, 24, 27, 0.05)');
+  makeSpark('spark2', [190,200,198,205,210,212,222], '#18181B', 'rgba(24, 24, 27, 0.05)');
+  makeSpark('spark3', [660,645,650,638,630,625,618], '#EF4444', 'rgba(239, 68, 68, 0.07)');
+  makeSpark('spark4', [64,66,65,68,67,69,68], '#71717A', 'rgba(113, 113, 122, 0.08)');
+
+  /* ── DASHBOARD VISITOR FLOW CHART ─────────────────────────────────────── */
+  const flowCtx = document.getElementById('flowChart');
+  if(flowCtx) {
+    new Chart(flowCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Wed','Thu','Fri','Sat','Sun','Mon','Tue'],
+        datasets: [{
+          data: [3800, 4100, 4600, 5200, 4800, 3900, 4812],
+          backgroundColor: [
+            'rgba(67, 24, 255, 0.1)',
+            'rgba(67, 24, 255, 0.1)',
+            'rgba(67, 24, 255, 0.1)',
+            '#4318FF',
+            'rgba(67, 24, 255, 0.1)',
+            'rgba(67, 24, 255, 0.1)',
+            'rgba(67, 24, 255, 0.3)',
+          ],
+          hoverBackgroundColor: '#3311DB',
+          borderRadius: 8,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ' ' + ctx.parsed.y.toLocaleString() + ' visitors'
+            },
+            backgroundColor: '#0F172A',
+            titleColor: 'rgba(255,255,255,0.6)',
+            bodyColor: '#fff',
+            padding: 10,
+            cornerRadius: 8,
+            displayColors: false,
+            titleFont: { size: 11 },
+            bodyFont: { size: 13, weight: '500' }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { color: '#94A3B8', font: { size: 11, family: '-apple-system' } }
+          },
+          y: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: {
+              color: '#94A3B8',
+              font: { size: 11, family: '-apple-system' },
+              callback: v => (v / 1000).toFixed(1) + 'k',
+              maxTicksLimit: 4
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /* ── DASHBOARD ORIGIN DONUT ───────────────────────────────────────────── */
+  const donutCtx = document.getElementById('donutChart');
+  if(donutCtx) {
+    new Chart(donutCtx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Saudi Arabia', 'France', 'UK', 'Germany', 'Other'],
+        datasets: [{
+          data: [48, 14, 11, 9, 18],
+          backgroundColor: ['#4318FF','#6AD2FF','#EE5D50','#05CD99','#E9EDF7'],
+          hoverOffset: 4,
+          borderWidth: 0,
+          borderColor: '#FFFFFF'
+        }]
+      },
+      options: {
+        responsive: false,
+        cutout: '72%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + '%' },
+            backgroundColor: '#1D1D1F',
+            bodyColor: '#fff',
+            padding: 8,
+            cornerRadius: 8,
+            displayColors: false,
+            bodyFont: { size: 12, weight: '500', family: '-apple-system' }
+          }
+        }
+      }
+    });
+  }
+
+  /* ── ROUTING LOGIC ───────────────────────────────── */
+  document.querySelectorAll('.sidebar .nav-item[data-page]').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      
+      const target = item.getAttribute('data-page');
+      
+      // Toggle Pages
+      document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+        if(p.id === target) p.classList.add('active');
+      });
+      
+      // Update topbar title
+      const title = document.getElementById('pageTitle');
+      const sub = document.getElementById('pageSub');
+      if(title && sub) {
+        if(target === 'page-dashboard') {
+          title.innerText = 'Good afternoon, AlUla';
+          sub.innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' - Live AST';
+        } else if(target === 'page-sites') {
+          title.innerText = 'Sites';
+          sub.innerText = 'Spatial demand · capacity · visitor flow';
+        } else if(target === 'page-visitors') {
+          title.innerText = 'Visitors';
+          sub.innerText = 'Demographics · sentiment · behavior';
+        } else if(target === 'page-markets') {
+          title.innerText = 'Markets';
+          sub.innerText = 'Global trends · origin intelligence';
+        } else if(target === 'page-forecasts') {
+          title.innerText = 'Forecasts';
+          sub.innerText = 'Predictive models · scenario planning';
+        }
+      }
+      maybeInitMap();
+    });
+  });
+
+  // Ensure initial title is set for dashboard
+  window.addEventListener('DOMContentLoaded', () => {
+      const activeNav = document.querySelector('.sidebar .nav-item.active');
+      if (activeNav) activeNav.click();
+  });
+
+</script>
+</body>
+</html>
