@@ -15,13 +15,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --gray-1:#F4F7FE;--gray-2:#E9EDF7;--gray-3:#D4D4D8;--gray-4:#A3AED0;
-  --gray-5:#707EAE;--gray-6:#2B3674;--black:#2B3674;--white:#FFFFFF;
-  --blue:#4318FF;--blue-lt:#F4F7FE;--green:#05CD99;--green-lt:#D1FAE5;
-  --amber:#FFCE20;--amber-lt:#FEF3C7;--purple:#4318FF;--purple-lt:#F4F7FE;
-  --red:#EE5D50;--gold:#4318FF;--gold-lt:#F4F7FE;
-  --apple-blue: #4318FF; --apple-blue-light: #F4F7FE;
+  --gray-5:#707EAE;--gray-6:#242424;--black:#242424;--white:#FFFFFF;
+  --blue:#FFAF20;--blue-lt:#F4F7FE;--green:#05CD99;--green-lt:#D1FAE5;
+  --amber:#FFCE20;--amber-lt:#FEF3C7;--purple:#FFAF20;--purple-lt:#F4F7FE;
+  --red:#EE5D50;--gold:#FFAF20;--gold-lt:#F4F7FE;
+  --apple-blue: #FFAF20; --apple-blue-light: #F4F7FE;
   --apple-red: #EE5D50; --apple-green: #05CD99; --apple-orange: #FFCE20;
-  --apple-black: #18181B; --apple-white: #FFFFFF;
+  --apple-black: #242424; --apple-white: #FFFFFF;
   --apple-gray-1: #F4F7FE; --apple-gray-2: #E9EDF7; --apple-gray-3: #D4D4D8; --apple-gray-4: #A3AED0; --apple-gray-5: #707EAE;
   --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 24px;
   --shadow-sm: var(--sh-sm); --shadow-md: var(--sh-md); --shadow-lg: 0 24px 50px rgba(0, 0, 0, 0.06);
@@ -48,7 +48,7 @@ html,body{height:100%;font-family:var(--font);background:var(--gray-1);color:var
 .sb-sec-lbl{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--gray-4);padding:0 12px;margin-bottom:6px;}
 .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r12);cursor:pointer;color:var(--gray-4);font-size:14px;letter-spacing:-.1px;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);text-decoration:none;position:relative;margin:4px 20px;}
 .nav-item:hover{background:var(--gray-1);color:var(--black);}
-.nav-item.active{background:var(--blue);color:var(--white);font-weight:700;box-shadow:0 10px 20px rgba(67, 24, 255, 0.2);}
+.nav-item.active{background:var(--blue);color:var(--white);font-weight:700;box-shadow:0 10px 20px rgba(255, 175, 32, 0.2);}
 .nav-item .ti{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
 .nav-badge{margin-left:auto;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;white-space:nowrap;}
 .nb-new{background:var(--blue-lt);color:#00966B;}
@@ -1686,8 +1686,8 @@ function drawSiteMapFrame() {
 
   const sites = [
     {x:.22,y:.30,r:28,load:.87,col:'#EF4444',name:'Hegra'},
-    {x:.48,y:.55,r:22,load:.63,col:'#18181B',name:'Old Town'},
-    {x:.65,y:.30,r:18,load:.48,col:'#18181B',name:'Dadan'},
+    {x:.48,y:.55,r:22,load:.63,col:'#242424',name:'Old Town'},
+    {x:.65,y:.30,r:18,load:.48,col:'#242424',name:'Dadan'},
     {x:.78,y:.62,r:14,load:.22,col:'#F59E0B',name:'Jabal Ikmah'},
     {x:.88,y:.38,r:12,load:.11,col:'#71717A',name:'Harrat'}
   ];
@@ -1701,8 +1701,8 @@ function drawSiteMapFrame() {
     // Draw track
     ctx.save();
     ctx.beginPath(); ctx.moveTo(ax,ay); ctx.quadraticCurveTo(mx,my,bx,by);
-    ctx.strokeStyle=`rgba(24,24,27,${w*.55})`; ctx.lineWidth=w*12; ctx.lineCap='round';
-    ctx.shadowColor = 'rgba(24, 24, 27, 0.3)';
+    ctx.strokeStyle=`rgba(36, 36, 36,${w*.55})`; ctx.lineWidth=w*12; ctx.lineCap='round';
+    ctx.shadowColor = 'rgba(36, 36, 36, 0.3)';
     ctx.shadowBlur = 6;
     ctx.stroke();
     
@@ -1711,7 +1711,7 @@ function drawSiteMapFrame() {
     const angle=Math.atan2(by-y1,bx-x1);
     ctx.save(); ctx.translate(bx,by); ctx.rotate(angle);
     ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-10,-4); ctx.lineTo(-10,4); ctx.closePath();
-    ctx.fillStyle=`rgba(24,24,27,${w*.7})`; ctx.fill(); ctx.restore();
+    ctx.fillStyle=`rgba(36, 36, 36,${w*.7})`; ctx.fill(); ctx.restore();
     ctx.restore();
 
     // Animated particles
@@ -1726,8 +1726,8 @@ function drawSiteMapFrame() {
        ctx.save();
        ctx.beginPath();
        ctx.arc(px, py, 3 + w*2, 0, Math.PI*2);
-       ctx.fillStyle = '#05CD99'; 
-       ctx.shadowColor = '#05CD99';
+       ctx.fillStyle = '#FFAF20'; 
+       ctx.shadowColor = '#FFAF20';
        ctx.shadowBlur = 6;
        ctx.fill();
        ctx.beginPath();
@@ -1786,8 +1786,8 @@ function drawRing(id, pct, color) {
   ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*pct);
   ctx.strokeStyle=color; ctx.lineWidth=5; ctx.lineCap='round'; ctx.stroke();
 }
-drawRing('ring0',.87,'#EF4444'); drawRing('ring1',.63,'#18181B');
-drawRing('ring2',.48,'#18181B'); drawRing('ring3',.22,'#F59E0B'); drawRing('ring4',.11,'#71717A');
+drawRing('ring0',.87,'#EF4444'); drawRing('ring1',.63,'#242424');
+drawRing('ring2',.48,'#242424'); drawRing('ring3',.22,'#F59E0B'); drawRing('ring4',.11,'#71717A');
 
 function selectSite(el, idx) {
   document.querySelectorAll('.site-card').forEach(c => c.classList.remove('selected'));
@@ -1800,8 +1800,8 @@ let routeLayers = [];
 
 const SITES = [
   {id:'hegra',    name:'Hegra (Al-Ḥijr)',  lat:26.7964, lng:37.9531, color:'#EF4444', load:87, cap:'Critical'},
-  {id:'oldtown',  name:'Old Town AlUla',   lat:26.6189, lng:37.9216, color:'#18181B', load:63, cap:'Good'},
-  {id:'dadan',    name:'Dadan & Lihyan',   lat:26.6012, lng:37.9094, color:'#18181B', load:48, cap:'Good'},
+  {id:'oldtown',  name:'Old Town AlUla',   lat:26.6189, lng:37.9216, color:'#242424', load:63, cap:'Good'},
+  {id:'dadan',    name:'Dadan & Lihyan',   lat:26.6012, lng:37.9094, color:'#242424', load:48, cap:'Good'},
   {id:'ikmah',    name:'Jabal Ikmah',      lat:26.6420, lng:37.8803, color:'#F59E0B', load:22, cap:'Underused'},
   {id:'harrat',   name:'Harrat Uwayrid',   lat:26.8800, lng:37.7500, color:'#71717A', load:11, cap:'Underused'},
 ];
@@ -1809,16 +1809,16 @@ const SITES = [
 /* route sets per persona */
 const ROUTE_SETS = {
   all: [
-    {from:0,to:1,weight:9,color:'#18181B',label:'Primary · 77%'},
-    {from:1,to:2,weight:5,color:'#18181B',label:'Secondary · 42%'},
+    {from:0,to:1,weight:9,color:'#242424',label:'Primary · 77%'},
+    {from:1,to:2,weight:5,color:'#242424',label:'Secondary · 42%'},
     {from:0,to:2,weight:3,color:'#52525B',label:'Direct · 18%'},
     {from:1,to:3,weight:2,color:'#F59E0B',label:'Emerging · 12%'},
     {from:2,to:3,weight:1.5,color:'#F59E0B',label:'Emerging · 8%'},
     {from:3,to:4,weight:1,color:'#F59E0B',label:'Rare · 4%'},
   ],
   heritage: [
-    {from:0,to:1,weight:10,color:'#18181B',label:'Primary · 91%'},
-    {from:1,to:2,weight:7,color:'#18181B',label:'Secondary · 68%'},
+    {from:0,to:1,weight:10,color:'#242424',label:'Primary · 91%'},
+    {from:1,to:2,weight:7,color:'#242424',label:'Secondary · 68%'},
     {from:2,to:3,weight:4,color:'#52525B',label:'Deep route · 38%'},
   ],
   luxury: [
@@ -1906,7 +1906,7 @@ function drawSiteMarkers() {
         white-space: nowrap;
       " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
         <div style="width: 6px; height: 6px; border-radius: 50%; background: ${s.color};"></div>
-        <span style="font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 700; color: #18181b; letter-spacing: -0.2px;">${s.load}%</span>
+        <span style="font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 700; color: #242424; letter-spacing: -0.2px;">${s.load}%</span>
       </div>`,
       iconSize: [50, 24],
       iconAnchor: [25, 12],
@@ -2034,11 +2034,11 @@ maybeInitMap();
   }
 
   const COLOR_STOPS = [
-    {at:0,   hex:'#F4F4F5'},
-    {at:0.25,hex:'#D4D4D8'},
-    {at:0.5, hex:'#52525B'},
-    {at:0.75,hex:'#18181B'},
-    {at:1,   hex:'#09090B'},
+    {at:0,   hex:'#FFFDF5'},
+    {at:0.25,hex:'#FFE5B2'},
+    {at:0.5, hex:'#FFC966'},
+    {at:0.75,hex:'#FFAF20'},
+    {at:1,   hex:'#CC8400'},
   ];
 
   function cellColor(v) { return lerp3(COLOR_STOPS, v); }
@@ -2176,7 +2176,7 @@ new Chart(document.getElementById('radarChart'), {
   data:{
     labels:['Cultural interest','Luxury & premium','Adventure','Family travel','Culinary'],
     datasets:[
-      {label:'France',data:[95,72,58,40,80],borderColor:'#4318FF',backgroundColor:'rgba(67, 24, 255, 0.08)',borderWidth:2,pointBackgroundColor:'#4318FF',pointRadius:4},
+      {label:'France',data:[95,72,58,40,80],borderColor:'#FFAF20',backgroundColor:'rgba(255, 175, 32, 0.08)',borderWidth:2,pointBackgroundColor:'#FFAF20',pointRadius:4},
       {label:'UK',data:[88,78,65,55,70],borderColor:'#05CD99',backgroundColor:'rgba(5, 205, 153, 0.08)',borderWidth:2,pointBackgroundColor:'#05CD99',pointRadius:4},
       {label:'Saudi Arabia',data:[65,55,75,90,80],borderColor:'#EE5D50',backgroundColor:'rgba(238, 93, 80, 0.08)',borderWidth:2,pointBackgroundColor:'#EE5D50',pointRadius:4},
       {label:'Japan',data:[90,88,50,30,65],borderColor:'#FFCE20',backgroundColor:'rgba(255, 206, 32, 0.08)',borderWidth:2,pointBackgroundColor:'#FFCE20',pointRadius:4},
@@ -2201,7 +2201,7 @@ new Chart(document.getElementById('mktTrendChart'), {
   data:{
     labels:months,
     datasets:[
-      {label:'Saudi Arabia',data:[4200,3800,3400,3100,2800,3200,3600,4000,4400,4800,5200,5600],borderColor:'#4318FF',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
+      {label:'Saudi Arabia',data:[4200,3800,3400,3100,2800,3200,3600,4000,4400,4800,5200,5600],borderColor:'#FFAF20',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
       {label:'France',data:[800,750,700,900,1100,1300,1100,900,1400,1600,1800,2100],borderColor:'#05CD99',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
       {label:'UK',data:[700,650,600,750,900,1000,950,800,1100,1250,1300,1450],borderColor:'#EE5D50',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4},
       {label:'Japan',data:[50,60,80,120,160,200,180,150,220,280,340,420],borderColor:'#FFCE20',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4,borderDash:[4,3]},
@@ -2223,7 +2223,7 @@ new Chart(document.getElementById('posMatrix'), {
   type:'bubble',
   data:{
     datasets:[
-      {label:'AlUla',data:[{x:72,y:85,r:20}],backgroundColor:'rgba(67,24,255,.80)',borderColor:'#4318FF',borderWidth:2},
+      {label:'AlUla',data:[{x:72,y:85,r:20}],backgroundColor:'rgba(255, 175, 32,.80)',borderColor:'#FFAF20',borderWidth:2},
       {label:'Petra',data:[{x:85,y:55,r:16}],backgroundColor:'rgba(238,93,80,.60)',borderColor:'#EE5D50',borderWidth:1.5},
       {label:'Palmyra',data:[{x:40,y:70,r:8}],backgroundColor:'rgba(212,212,216,.60)',borderColor:'#D4D4D8',borderWidth:1.5},
       {label:'Luxor',data:[{x:78,y:40,r:14}],backgroundColor:'rgba(255,206,32,.60)',borderColor:'#FFCE20',borderWidth:1.5},
@@ -2261,7 +2261,7 @@ new Chart(document.getElementById('posMatrix'), {
   function heatColor(v){
     if(v<.4) return lerpC('#F4F7FE','#A3AED0',v/.4);
     if(v<.7) return lerpC('#A3AED0','#6AD2FF',(v-.4)/.3);
-    return lerpC('#6AD2FF','#4318FF',(v-.7)/.3);
+    return lerpC('#6AD2FF','#FFAF20',(v-.7)/.3);
   }
   /* synthetic demand curve: peaks around Aug 14 (day 14), Sep 7, Oct 12 */
   function demand(m,d){
@@ -2320,7 +2320,7 @@ new Chart(document.getElementById('posMatrix'), {
   [0,.17,.33,.5,.67,.83,1].forEach(v=>{
     const c=document.createElement('div');
     c.className='hm-legend-cell';
-    c.style.background=lerpC('#F4F7FE','#4318FF',v);
+    c.style.background=lerpC('#F4F7FE','#FFAF20',v);
     legCells.appendChild(c);
   });
 })();
@@ -2344,9 +2344,9 @@ new Chart(document.getElementById('posMatrix'), {
     data:{
       labels,
       datasets:[
-        {label:'Upper bound',data:upper,borderColor:'transparent',backgroundColor:'rgba(67, 24, 255, 0.1)',fill:'+1',pointRadius:0,tension:.4},
-        {label:'Forecast',data:base,borderColor:'#4318FF',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4,fill:false},
-        {label:'Lower bound',data:lower,borderColor:'transparent',backgroundColor:'rgba(67, 24, 255, 0.1)',fill:'-1',pointRadius:0,tension:.4},
+        {label:'Upper bound',data:upper,borderColor:'transparent',backgroundColor:'rgba(255, 175, 32, 0.1)',fill:'+1',pointRadius:0,tension:.4},
+        {label:'Forecast',data:base,borderColor:'#FFAF20',backgroundColor:'transparent',borderWidth:3,pointRadius:0,tension:.4,fill:false},
+        {label:'Lower bound',data:lower,borderColor:'transparent',backgroundColor:'rgba(255, 175, 32, 0.1)',fill:'-1',pointRadius:0,tension:.4},
       ]
     },
     options:{
@@ -2396,8 +2396,8 @@ new Chart(document.getElementById('posMatrix'), {
     ctx.fill();
   }
 
-  makeSpark('spark1', [3200,3800,3400,4100,3900,4500,4812], '#18181B', 'rgba(24, 24, 27, 0.05)');
-  makeSpark('spark2', [190,200,198,205,210,212,222], '#18181B', 'rgba(24, 24, 27, 0.05)');
+  makeSpark('spark1', [3200,3800,3400,4100,3900,4500,4812], '#242424', 'rgba(36, 36, 36, 0.05)');
+  makeSpark('spark2', [190,200,198,205,210,212,222], '#242424', 'rgba(36, 36, 36, 0.05)');
   makeSpark('spark3', [660,645,650,638,630,625,618], '#EF4444', 'rgba(239, 68, 68, 0.07)');
   makeSpark('spark4', [64,66,65,68,67,69,68], '#71717A', 'rgba(113, 113, 122, 0.08)');
 
@@ -2411,13 +2411,13 @@ new Chart(document.getElementById('posMatrix'), {
         datasets: [{
           data: [3800, 4100, 4600, 5200, 4800, 3900, 4812],
           backgroundColor: [
-            'rgba(67, 24, 255, 0.1)',
-            'rgba(67, 24, 255, 0.1)',
-            'rgba(67, 24, 255, 0.1)',
-            '#4318FF',
-            'rgba(67, 24, 255, 0.1)',
-            'rgba(67, 24, 255, 0.1)',
-            'rgba(67, 24, 255, 0.3)',
+            'rgba(255, 175, 32, 0.1)',
+            'rgba(255, 175, 32, 0.1)',
+            'rgba(255, 175, 32, 0.1)',
+            '#FFAF20',
+            'rgba(255, 175, 32, 0.1)',
+            'rgba(255, 175, 32, 0.1)',
+            'rgba(255, 175, 32, 0.3)',
           ],
           hoverBackgroundColor: '#3311DB',
           borderRadius: 8,
@@ -2473,7 +2473,7 @@ new Chart(document.getElementById('posMatrix'), {
         labels: ['Saudi Arabia', 'France', 'UK', 'Germany', 'Other'],
         datasets: [{
           data: [48, 14, 11, 9, 18],
-          backgroundColor: ['#4318FF','#6AD2FF','#EE5D50','#05CD99','#E9EDF7'],
+          backgroundColor: ['#FFAF20','#6AD2FF','#EE5D50','#05CD99','#E9EDF7'],
           hoverOffset: 4,
           borderWidth: 0,
           borderColor: '#FFFFFF'
